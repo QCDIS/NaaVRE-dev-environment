@@ -1,0 +1,3 @@
+[submodule "submodules/VREPaaS-helm-charts"]
+	path = submodules/VREPaaS-helm-charts
+	url = https://github.com/QCDIS/VREPaaS-helm-charts
