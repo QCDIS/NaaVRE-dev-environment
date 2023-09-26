@@ -80,6 +80,19 @@ Login through keycloak.
 |---------------------------|--------------|
 | `vre-api` service account | `token_argo` |
 
+### VREPaaS
+
+UI: https://naavre-dev.minikube.test/vreapp
+
+Login through keycloak.
+
+Admin interface: https://naavre-dev.minikube.test/vre-api-test/admin/
+
+| Account       | Username | Password | Token          |
+|---------------|----------|----------|----------------|
+| Administrator | `admin`  | `admin`  |                |
+| API user      | `user`   | `user`   | `token_vreapi` |
+
 
 ## Troubleshooting
 

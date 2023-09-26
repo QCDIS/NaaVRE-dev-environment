@@ -1,0 +1,35 @@
+global:
+  environment: test
+
+  ingress:
+    host: "naavre-dev.minikube.test"
+
+  base_paths:
+    development:
+      vreapi: "/vre-api-test"
+      vreapp: "/vreapp"
+
+  keycloak:
+    url: https://naavre-dev.minikube.test/auth
+    realm: vre
+    client_id: naavre
+    client_secret_key: fake_openid_client_secret
+    insecureSkipTLSVerification: true
+
+  argo:
+    namespace: argo
+    url: https://naavre-dev.minikube.test/argowf
+    token: Bearer token_argo
+
+vreapi:
+  secret_key: "dev_secret_key_vreapi"
+  auth:
+    superuser_email: "admin@naavre-dev.minikube.test"
+    superuser_username: "admin"
+    superuser_password: "admin"
+    username: "user"
+    password: "user"
+    token: "token_vreapi"
+
+vreapp:
+  secret_key: "dev_secret_key_vreapp"
