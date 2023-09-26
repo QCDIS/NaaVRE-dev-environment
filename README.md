@@ -57,6 +57,21 @@ minikube delete
 ```
 
 
+## Access the services
+
+The dev services are only accessible locally, using the domain name naavre-dev.minikube.test (provided minikube ingress-dns was setup). That allows us to use insecure credentials to login to the services.
+
+### Keycloak
+
+https://naavre-dev.minikube.test/auth/
+
+| Account                  | Username | Password |
+|--------------------------|----------|----------|
+| Superuser (master realm) | `admin`  | `admin`  |
+| User (vre realm)         | `user`   | `user`   |
+
+
+
 ## Troubleshooting
 
 ### Context deadline exceeded when pulling NaaVRE image
