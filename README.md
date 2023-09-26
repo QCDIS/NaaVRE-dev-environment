@@ -101,6 +101,12 @@ Admin interface: https://naavre-dev.minikube.test/vre-api-test/admin/
 | Administrator | `admin`  | `admin`  |                |
 | API user      | `user`   | `user`   | `token_vreapi` |
 
+### NaaVRE
+
+https://naavre-dev.minikube.test/n-a-a-vre/
+
+Login through keycloak.
+
 
 ## Troubleshooting
 
