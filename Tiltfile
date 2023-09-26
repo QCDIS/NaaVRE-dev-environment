@@ -54,3 +54,23 @@ k8s_resource('vrepaas-vreapi', labels=['VREPaaS'],
 k8s_resource('vrepaas-vreapp', labels=['VREPaaS'],
              links=[ 'https://naavre-dev.minikube.test/vreapp/'])
 k8s_resource('vrepaas-postgresql', labels=['VREPaaS'])
+
+
+# NaaVRE
+
+helm_remote(
+  'jupyterhub',
+  repo_url='https://jupyterhub.github.io/helm-chart/',
+  values=[
+    './helm_config/n-a-a-vre/values.yaml',
+    ],
+  )
+
+k8s_resource('hub', labels=['NaaVRE'],
+             links=['https://naavre-dev.minikube.test/n-a-a-vre/'])
+k8s_resource('user-scheduler', labels=['NaaVRE'])
+k8s_resource('proxy', labels=['NaaVRE'])
+k8s_resource('hook-image-puller', labels=['NaaVRE'])
+k8s_resource('hook-image-awaiter', labels=['NaaVRE'])
+k8s_resource('user-placeholder', labels=['NaaVRE'], pod_readiness='ignore')
+k8s_resource('continuous-image-puller', labels=['NaaVRE'])
