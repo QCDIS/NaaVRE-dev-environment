@@ -17,3 +17,22 @@ k8s_resource('keycloak', labels=['Keycloak'],
              links=['https://naavre-dev.minikube.test/auth/'])
 k8s_resource('keycloak-postgresql', labels=['Keycloak'])
 k8s_resource('keycloak-keycloak-config-cli', labels=['Keycloak'])
+
+
+# Argo
+
+k8s_yaml('helm_config/argo/argo-sso-secret.yaml')
+k8s_yaml('helm_config/argo/auth-vre-api.yaml')
+helm_remote(
+  'argo-workflows',
+  repo_name='argo',
+  repo_url='https://argoproj.github.io/argo-helm',
+  version='0.33.1',
+  values=[
+    'helm_config/argo/values.yaml',
+    ]
+  )
+
+k8s_resource('argo-workflows-server', labels=['Argo'],
+             links=['https://naavre-dev.minikube.test/argowf/'])
+k8s_resource('argo-workflows-workflow-controller', labels=['Argo'])
