@@ -1,0 +1,83 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: vre-api
+rules:
+  - verbs:
+      - get
+      - watch
+      - patch
+      - delete
+    apiGroups:
+      - ''
+    resources:
+      - pods
+  - verbs:
+      - get
+      - watch
+      - patch
+    apiGroups:
+      - ''
+    resources:
+      - pods/log
+  - verbs:
+      - create
+    apiGroups:
+      - ''
+    resources:
+      - pods/exec
+  - verbs:
+      - list
+      - watch
+      - create
+      - get
+      - update
+      - delete
+    apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtasksets
+      - workflowartifactgctasks
+      - workflowtemplates
+      - workflows
+      - cronworkflows
+  - verbs:
+      - patch
+    apiGroups:
+      - argoproj.io
+    resources:
+      - workflowtasksets/status
+      - workflowartifactgctasks/status
+      - workflows/status
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vre-api
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vre-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: vre-api
+subjects:
+- kind: ServiceAccount
+  name: vre-api
+  namespace: argo
+
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: vre-api.service-account-token
+  annotations:
+    kubernetes.io/service-account.name: vre-api
+stringData:
+  namespace: "default"
+  token: "token_argo"

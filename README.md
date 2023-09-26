@@ -70,6 +70,15 @@ https://naavre-dev.minikube.test/auth/
 | Superuser (master realm) | `admin`  | `admin`  |
 | User (vre realm)         | `user`   | `user`   |
 
+### Argo
+
+https://naavre-dev.minikube.test/argowf/
+
+Login through keycloak.
+
+| Account                   | Token        |
+|---------------------------|--------------|
+| `vre-api` service account | `token_argo` |
 
 
 ## Troubleshooting
