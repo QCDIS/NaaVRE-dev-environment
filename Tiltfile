@@ -55,6 +55,32 @@ k8s_resource('vrepaas-vreapp', labels=['VREPaaS'],
              links=[ 'https://naavre-dev.minikube.test/vreapp/'])
 k8s_resource('vrepaas-postgresql', labels=['VREPaaS'])
 
+docker_build(
+    'qcdis/vreapi',
+    context='./submodules/VREPaaS',
+    dockerfile='./submodules/VREPaaS/tilt/vreapis/Dockerfile',
+    only=['./vreapis/'],
+    entrypoint='/app/entrypoint.dev.sh',
+    live_update=[
+        sync('./submodules/VREPaaS/vreapis', '/app'),
+        run('cd /app && /opt/venv/bin/python manage.py makemigrations'),
+        run('cd /app && /opt/venv/bin/python manage.py migrate'),
+        run('cd /app && /opt/venv/bin/pip install -r requirements.txt',
+             trigger='./submodules/VREPaaS/vreapis/requirements.txt'),
+    ],
+)
+docker_build(
+    'qcdis/vreapp',
+    context='./submodules/VREPaaS',
+    dockerfile='./submodules/VREPaaS/tilt/vre-panel/Dockerfile',
+    only=['./vre-panel/'],
+    live_update=[
+        sync('./submodules/VREPaaS/vre-panel', '/app'),
+        run('cd /app && npm install',
+            trigger=['./submodules/VREPaaS/vre-panel/package.json'])
+    ],
+)
+
 
 # NaaVRE
 
