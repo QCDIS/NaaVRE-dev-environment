@@ -28,7 +28,15 @@ conda install -c conda-forge pre_commit minikube tilt
 
 ### Pre-commit hooks
 
-[//]: # (Todo: add GitGuardian setup)
+To install and enable pre-commit hooks, run:
+
+```shell
+conda activate naavre-dev
+pip install pre-commit
+pre-commit install
+pip install ggshield
+ggshield auth login
+```
 
 ### Minikube cluster
 
