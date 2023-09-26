@@ -36,3 +36,21 @@ helm_remote(
 k8s_resource('argo-workflows-server', labels=['Argo'],
              links=['https://naavre-dev.minikube.test/argowf/'])
 k8s_resource('argo-workflows-workflow-controller', labels=['Argo'])
+
+
+# VREPaaS
+
+k8s_yaml(helm(
+  './submodules/VREPaaS-helm-charts/',
+  name='vrepaas',
+  values=[
+    'helm_config/vrepaas/values.yaml',
+    ],
+  ))
+
+k8s_resource('vrepaas-vreapi', labels=['VREPaaS'],
+             links=['https://naavre-dev.minikube.test/vre-api-test/api/',
+                    'https://naavre-dev.minikube.test/vre-api-test/admin/'])
+k8s_resource('vrepaas-vreapp', labels=['VREPaaS'],
+             links=[ 'https://naavre-dev.minikube.test/vreapp/'])
+k8s_resource('vrepaas-postgresql', labels=['VREPaaS'])
