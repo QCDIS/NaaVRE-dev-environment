@@ -11,11 +11,11 @@ hub:
   baseUrl: /n-a-a-vre
   config:
     GenericOAuthenticator:
-      client_id: paas-gpelouze
+      client_id: naavre
       client_secret: fake_openid_client_secret
-      authorize_url: https://naavre-dev.minikube.test/auth/realms/vre-dev/protocol/openid-connect/auth
-      token_url: https://naavre-dev.minikube.test/auth/realms/vre-dev/protocol/openid-connect/token
-      userdata_url: https://naavre-dev.minikube.test/auth/realms/vre-dev/protocol/openid-connect/userinfo
+      authorize_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/auth
+      token_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/token
+      userdata_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/userinfo
       oauth_callback_url: https://naavre-dev.minikube.test/n-a-a-vre/hub/oauth_callback
       login_service: keycloak
       username_key: preferred_username
