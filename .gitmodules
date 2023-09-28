@@ -4,3 +4,6 @@
 [submodule "submodules/VREPaaS"]
 	path = submodules/VREPaaS
 	url = git@github.com:QCDIS/VREPaaS.git
+[submodule "submodules/NaaVRE"]
+	path = submodules/NaaVRE
+	url = git@github.com:QCDIS/NaaVRE.git
