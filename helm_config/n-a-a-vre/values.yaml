@@ -64,9 +64,7 @@ singleuser:
     SEARCH_API_ENDPOINT: ""
     SEARCH_API_TOKEN: ""
     VLAB_SLUG: n-a-a-vre
-  profileList:
-  - display_name: "Laserfarm VL environment"
-    description: "Vitual lab with Laserfarm dependencies installed"
-    kubespawner_override:
-      image: qcdis/n-a-a-vre-laserfarm:v2.0-beta
-      pullPolicy: Always
+  image:
+    name: qcdis/n-a-a-vre
+    tag: v2.0-beta
+    pullPolicy: IfNotPresent
