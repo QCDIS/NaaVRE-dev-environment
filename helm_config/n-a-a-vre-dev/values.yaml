@@ -1,0 +1,24 @@
+image:
+  repository: qcdis/n-a-a-vre-dev
+  pullPolicy: Never
+
+ingress:
+  enabled: true
+  hosts:
+    - host: naavre-dev.minikube.test
+
+singleuser:
+  baseUrl: /n-a-a-vre-dev
+  extraEnv:
+    API_ENDPOINT: "https://naavre-dev.minikube.test/vre-api-test/"
+    NAAVRE_API_TOKEN: "token_vreapi"
+    CELL_GITHUB: "https://github.com/QCDIS/NaaVRE-cells-test"
+    CELL_GITHUB_TOKEN: ""
+    JUPYTERHUB_SINGLEUSER_APP: "jupyter_server.serverapp.ServerApp"
+    MODULE_MAPPING_URL: "https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json"
+    MULTIPLY_CONF_URL: "https://github.com/QCDIS/data-access/raw/master/multiply.zip"
+    PROJ_LIB: "/venv/share/proj"
+    REGISTRY_URL: "https://hub.docker.com/u/qcdis"
+    SEARCH_API_ENDPOINT: ""
+    SEARCH_API_TOKEN: ""
+    VLAB_SLUG: "n-a-a-vre"
