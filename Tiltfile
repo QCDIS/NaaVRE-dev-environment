@@ -96,7 +96,4 @@ k8s_resource('hub', labels=['NaaVRE'],
              links=['https://naavre-dev.minikube.test/n-a-a-vre/'])
 k8s_resource('user-scheduler', labels=['NaaVRE'])
 k8s_resource('proxy', labels=['NaaVRE'])
-k8s_resource('hook-image-puller', labels=['NaaVRE'])
-k8s_resource('hook-image-awaiter', labels=['NaaVRE'])
 k8s_resource('user-placeholder', labels=['NaaVRE'], pod_readiness='ignore')
-k8s_resource('continuous-image-puller', labels=['NaaVRE'])

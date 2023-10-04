@@ -37,6 +37,11 @@ ingress:
 proxy:
   service:
     type: ClusterIP
+prePuller:
+  continuous:
+    enabled: false
+  hook:
+    enabled: false
 singleuser:
   cmd: ['/usr/local/bin/start-jupyter-venv.sh']
   extraFiles:
