@@ -92,8 +92,28 @@ helm_remote(
     ],
   )
 
-k8s_resource('hub', labels=['NaaVRE'],
+k8s_resource('hub', labels=['NaaVRE'], trigger_mode=TRIGGER_MODE_MANUAL,
              links=['https://naavre-dev.minikube.test/n-a-a-vre/'])
 k8s_resource('user-scheduler', labels=['NaaVRE'])
-k8s_resource('proxy', labels=['NaaVRE'])
+k8s_resource('proxy', labels=['NaaVRE'], trigger_mode=TRIGGER_MODE_MANUAL)
 k8s_resource('user-placeholder', labels=['NaaVRE'], pod_readiness='ignore')
+
+
+# NaaVRE dev
+
+k8s_yaml(helm(
+  './helm_charts/n-a-a-vre-dev/',
+  name='n-a-a-vre-dev',
+    values=[
+    'helm_config/n-a-a-vre-dev/values.yaml',
+    ],
+  ))
+
+k8s_resource('n-a-a-vre-dev', labels=['NaaVRE-dev'])
+
+docker_build(
+  'qcdis/n-a-a-vre-dev',
+  context='./submodules/NaaVRE',
+  dockerfile='./submodules/NaaVRE/docker/vanilla/dev.Dockerfile',
+  extra_tag=['qcdis/n-a-a-vre-dev:latest'],
+  )

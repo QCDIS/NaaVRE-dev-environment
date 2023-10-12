@@ -107,6 +107,13 @@ https://naavre-dev.minikube.test/n-a-a-vre/
 
 Login through keycloak.
 
+To show changes to the NaaVRE component in Tilt:
+- Wait for the NaaVRE-dev/n-a-a-vre-dev resource to be updated (this can take a while)
+- Restart the user server (from Jupyter Lab: File > “Hub Control Panel”, then “Stop my Server” and “Start my Server”)
+
+This is necessary because the Jupyter Lab pod is started dynamically by Jupyter Hub, which prevents Tilt from detecting it should reload it.
+It is usually not necessary to reload the NaaVRE/hub and proxy resources, even if Tilt says it has changes.
+
 
 ## Troubleshooting
 
