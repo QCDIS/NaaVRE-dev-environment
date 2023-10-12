@@ -115,6 +115,35 @@ This is necessary because the Jupyter Lab pod is started dynamically by Jupyter 
 It is usually not necessary to reload the NaaVRE/hub and proxy resources, even if Tilt says it has changes.
 
 
+## Development cycle
+
+The different components of NaaVRE have their own Git repositories, which are included as submodules of the NaaVRE-dev-environment repository. In the context of the dev repo, these submodules are references to a commit in the component repo.
+When in root directory of this repo, `git` commands apply to the NaaVRE-dev-environment repo.
+When in the submodule directory, `git` commands apply to the submodule repo.
+
+For any development task, follow this cycle:
+
+1. On GitHub, create an issue in the appropriate component repository
+2. Create a branch linked to the issue (e.g. `nnn-my-branch`)
+3. Checkout this branch in the submodule:
+
+   ```bash
+   cd submodules/COMPONENT
+   git fetch origin
+   git checkout nnn-my-branch
+   ```
+
+4. Edit code in the submodule while checking the changes with Tilt
+
+   *Note:* During development, running `git status` in the NaaVRE-dev-environment root directory will show unstaged changes to the submodule, such as `modified: submodule/COMPONENT (untracked content)` or `(new commits)`.
+
+5. Commit and push changes from the submodule directory
+6. On GitHub, create a pull request in the submodule repo
+7. Once it is merged:
+   - In the submodule directory, switch back to the main branch and pull the latest changes
+   - In the NaaVRE-dev-environment directory, stage and commit the changes to the submodule. An appropriate commit message would be “update COMPONENT ref merging COMPONENT/nnn-my-branch”
+
+
 ## Troubleshooting
 
 ### Context deadline exceeded when pulling NaaVRE image
