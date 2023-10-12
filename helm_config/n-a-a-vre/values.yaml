@@ -70,6 +70,6 @@ singleuser:
     SEARCH_API_TOKEN: ""
     VLAB_SLUG: n-a-a-vre
   image:
-    name: qcdis/n-a-a-vre
-    tag: v2.0-beta
-    pullPolicy: IfNotPresent
+    name: qcdis/n-a-a-vre-dev
+    tag: latest
+    pullPolicy: Never
