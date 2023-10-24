@@ -101,17 +101,27 @@ Admin interface: https://naavre-dev.minikube.test/vre-api-test/admin/
 | Administrator | `admin`  | `admin`  |                |
 | API user      | `user`   | `user`   | `token_vreapi` |
 
+### NaaVRE-dev
+
+https://naavre-dev.minikube.test/n-a-a-vre-dev
+
+No authentication.
+
+This version of NaaVRE runs Jupyter Lab alone (i.e. without Jupyter Hub), and updates automatically when the NaaVRE code is changed. It is suited for testing NaaVRE features, but not for testing integration (in that case, see NaaVRE section below).
+
 ### NaaVRE
 
 https://naavre-dev.minikube.test/n-a-a-vre/
 
 Login through keycloak.
 
+This version of NaaVRE is controlled by Jupyter Hub, and is closer to the actual deployed version. However, it will not update automatically.
+
 To show changes to the NaaVRE component in Tilt:
 - Wait for the NaaVRE-dev/n-a-a-vre-dev resource to be updated (this can take a while)
 - Restart the user server (from Jupyter Lab: File > “Hub Control Panel”, then “Stop my Server” and “Start my Server”)
 
-This is necessary because the Jupyter Lab pod is started dynamically by Jupyter Hub, which prevents Tilt from detecting it should reload it.
+This is necessary because the Jupyter Lab pod is started dynamically by Jupyter Hub, which prevents Tilt from detecting when it should reload it.
 It is usually not necessary to reload the NaaVRE/hub and proxy resources, even if Tilt says it has changes.
 
 
