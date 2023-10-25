@@ -22,3 +22,5 @@ singleuser:
     SEARCH_API_ENDPOINT: ""
     SEARCH_API_TOKEN: ""
     VLAB_SLUG: "n-a-a-vre"
+    # Variables normally set by Jupyter Hub
+    JUPYTERHUB_USER: 'user'
