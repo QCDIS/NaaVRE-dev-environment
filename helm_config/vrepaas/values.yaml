@@ -14,7 +14,6 @@ global:
     realm: vre
     client_id: naavre
     client_secret_key: fake_openid_client_secret
-    insecureSkipTLSVerification: true
 
   argo:
     namespace: argo
@@ -30,6 +29,8 @@ vreapi:
     username: "user"
     password: "user"
     token: "token_vreapi"
+  insecureSkipTLSVerification: true
 
 vreapp:
   secret_key: "dev_secret_key_vreapp"
+  insecureSkipTLSVerification: true
