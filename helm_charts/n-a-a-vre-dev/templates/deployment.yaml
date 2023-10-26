@@ -55,7 +55,7 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - mountPath: /home/jovyan
+            - mountPath: /home/jovyan/NaaVRE
               name: volume-home
       {{- with .Values.nodeSelector }}
       nodeSelector:
