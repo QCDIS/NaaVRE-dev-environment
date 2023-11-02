@@ -23,9 +23,7 @@ and the repository exists.
 ```
 then you need to add your ssh key to your GitHub account. Follow the instructions [here](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account).
 
-```
-
-Checkout the [Git Submodules documentation](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
+Check out the [Git Submodules documentation](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
 ### Conda environment
 
@@ -53,7 +51,7 @@ ggshield auth login
 
 ### Minikube cluster
 
-The NaaVRE components are deployed by tilt to a local Kubernetes using minikube. We use ingress-dns to access those resources. To configure it, follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Chose your operating system.
+The NaaVRE components are deployed by tilt to a local Kubernetes using minikube. We use ingress-dns to access those resources. To configure it, follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Choose your operating system.
 
 <details open>
 
