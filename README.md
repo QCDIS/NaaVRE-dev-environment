@@ -12,6 +12,19 @@ To integrate the different components of NaaVRE, we use Git submodules:
 git clone --recurse-submodules git@github.com:QCDIS/NaaVRE-dev-environment.git
 ```
 
+if you get an error:
+```commandline
+Cloning into 'NaaVRE-dev-environment'...
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+```
+then you need to add your ssh key to your GitHub account. Follow the instructions [here](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account).
+
+```
+
 Checkout the [Git Submodules documentation](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
 
 ### Conda environment
