@@ -7,3 +7,6 @@
 [submodule "submodules/NaaVRE"]
 	path = submodules/NaaVRE
 	url = git@github.com:QCDIS/NaaVRE.git
+[submodule "submodules/generic-device-plugin"]
+	path = submodules/generic-device-plugin
+	url = https://github.com/squat/generic-device-plugin.git

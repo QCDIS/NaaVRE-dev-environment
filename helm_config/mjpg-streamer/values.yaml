@@ -1,0 +1,10 @@
+resources:
+  limits:
+    squat.ai/video: 1
+
+ingress:
+  enabled: true
+  hosts:
+    - host: naavre-dev.minikube.test
+      paths:
+        - /mjpg-streamer
