@@ -1,5 +1,26 @@
 load('ext://helm_remote', 'helm_remote')
 
+# Kubernetes Generic Device Plugin
+k8s_yaml('k8s/generic-device-plugin.yaml')
+k8s_resource('generic-device-plugin', labels=['generic-device-plugin'])
+
+k8s_resource(
+   workload='generic-device-plugin'
+)
+
+# mjpg
+
+k8s_yaml(helm(
+  './helm_charts/mjpg-streamer/',
+  name='mjpg-streamer',
+    values=[
+    'helm_config/mjpg-streamer/values.yaml',
+    ],
+  ))
+
+k8s_resource(workload='mjpg-streamer', labels=['mjpg-streamer'],
+             links=['https://naavre-dev.minikube.test/mjpg-streamer'])
+
 
 # Keycloak
 
