@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu
+spec:
+  containers:
+  - name: ubuntu
+    image: ubuntu:latest
+    # run apt update command and then wait forever
+    command: ["/bin/sh", "-c", "apt-get update && apt-get install -y rclone fuse vim && rclone ls s3:rcloneasddsfv --no-check-certificate -vvv && mkdir /mnt/my_remote && rclone mount s3:rcloneasddsfv /mnt/my_remote --no-check-certificate --allow-other --allow-non-empty --vfs-cache-mode writes --daemon && ls -lah /mnt/my_remote && tail -f /dev/null"]
+    resources:
+    limits:
+      squat.ai/fuse: 1
+      securityContext:
+        capabilities:
+          add: ["SYS_ADMIN"]
+
+    # mount the rclone config file
+    volumeMounts:
+    - name: rclone-config
+      mountPath: /root/.config/rclone/rclone.conf
+      subPath: rclone.conf
+  volumes:
+  - name: rclone-config
+    configMap:
+      name: rclone-config
+      items:
+      - key: rclone.conf
+        path: rclone.conf

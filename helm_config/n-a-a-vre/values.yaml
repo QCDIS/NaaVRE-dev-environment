@@ -69,7 +69,13 @@ singleuser:
     SEARCH_API_ENDPOINT: ""
     SEARCH_API_TOKEN: ""
     VLAB_SLUG: n-a-a-vre
-  image:
-    name: qcdis/n-a-a-vre-dev
-    tag: latest
-    pullPolicy: Never
+  profileList:
+  - display_name: "Basic VL environment"
+    description: "Virtual lab with Python and R support"
+    kubespawner_override:
+      image: qcdis/n-a-a-vre:latest
+      pullPolicy: Never
+      default: True
+      extra_resource_limits:
+#        squat.ai/video: 1
+        squat.ai/fuse: 1

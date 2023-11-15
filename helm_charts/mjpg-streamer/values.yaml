@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: kvaps/mjpg-streamer
+  repository: ubuntu
   tag: latest
   pullPolicy: IfNotPresent
 
