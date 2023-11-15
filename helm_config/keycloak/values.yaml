@@ -28,6 +28,16 @@ postgresql:
     postgresPassword: fake_postgres_password
     password: fake_password
 
+postgresql:
+  enabled: true
+  auth:
+    password: ""
+    database: bitnami_keycloak
+    existingSecret: ""
+  architecture: standalone
+
+
+
 keycloakConfigCli:
   enabled: true
   configuration:

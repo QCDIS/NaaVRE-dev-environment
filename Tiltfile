@@ -10,17 +10,22 @@ k8s_resource(
 
 # mjpg
 
-k8s_yaml(helm(
-  './helm_charts/mjpg-streamer/',
-  name='mjpg-streamer',
-    values=[
-    'helm_config/mjpg-streamer/values.yaml',
-    ],
-  ))
+#k8s_yaml(helm(
+#  './helm_charts/mjpg-streamer/',
+#  name='mjpg-streamer',
+#    values=[
+#    'helm_config/mjpg-streamer/values.yaml',
+#    ],
+#  ))
 
-k8s_resource(workload='mjpg-streamer', labels=['mjpg-streamer'],
-             links=['https://naavre-dev.minikube.test/mjpg-streamer'])
+#k8s_resource(workload='mjpg-streamer', labels=['mjpg-streamer'],
+#             links=['https://naavre-dev.minikube.test/mjpg-streamer'])
 
+# Ubuntu
+
+k8s_yaml('k8s/ubuntu.yaml')
+k8s_yaml('k8s/rclone-config.yaml')
+k8s_resource('ubuntu', labels=['ubuntu'])
 
 # Keycloak
 

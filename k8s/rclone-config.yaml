@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rclone-config
+data:
+  rclone.conf: |
+    [s3]
+    type = s3
+    provider = AWS
+    env_auth = false
+    access_key_id = XXXXX
+    secret_access_key = XXXXX
+    region = us-east-1
+    acl = private
