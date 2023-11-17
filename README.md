@@ -92,6 +92,8 @@ minikube addons enable ingress-dns
 tilt up
 ```
 
+Once Argo is up and running, run `token=$(kubectl get secret executor.service-account-token -o jsonpath='{.data.token}' | base64 -d); echo "Bearer $token"` and add the output to `global.argo.token` in [./helm_config/vrepaas/values.yaml](./helm_config/vrepaas/values.yaml).
+
 Optional: 
 
 ```shell
@@ -124,9 +126,9 @@ https://naavre-dev.minikube.test/argowf/
 
 Login through keycloak.
 
-| Account                   | Token        |
-|---------------------------|--------------|
-| `vre-api` service account | `token_argo` |
+| Account                    | Token   |
+|----------------------------|---------|
+| `executor` service account | Dynamic |
 
 ### VREPaaS
 
