@@ -22,6 +22,7 @@ k8s_resource('keycloak-keycloak-config-cli', labels=['Keycloak'])
 # Argo
 
 k8s_yaml('helm_config/argo/argo-sso-secret.yaml')
+k8s_yaml('helm_config/argo/auth-executor.yaml')
 k8s_yaml('helm_config/argo/auth-vre-api.yaml')
 helm_remote(
   'argo-workflows',
