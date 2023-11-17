@@ -69,6 +69,7 @@ singleuser:
     SEARCH_API_ENDPOINT: ""
     SEARCH_API_TOKEN: ""
     VLAB_SLUG: n-a-a-vre
+    ARGO_WF_SPEC_SERVICEACCOUNT: executor
   image:
     name: qcdis/n-a-a-vre-dev
     tag: latest
