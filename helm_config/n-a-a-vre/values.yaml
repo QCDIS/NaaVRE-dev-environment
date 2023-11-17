@@ -57,7 +57,7 @@ singleuser:
         command: ["sh", "-c", "/tmp/init_script.sh"]
   defaultUrl: "/lab"
   extraEnv:
-    API_ENDPOINT: https://naavre-dev.minikube.test/vre-api-test/
+    API_ENDPOINT: http://naavre-dev.minikube.test/vre-api-test
     NAAVRE_API_TOKEN: token_vreapi
     CELL_GITHUB: https://github.com/QCDIS/NaaVRE-cells-test
     CELL_GITHUB_TOKEN: ""
