@@ -16,7 +16,7 @@ global:
     client_secret_key: fake_openid_client_secret
 
   argo:
-    namespace: argo
+    namespace: default
     url: https://naavre-dev.minikube.test/argowf
     token: Bearer {output of kubectl get secret executor.service-account-token -o jsonpath='{.data.token}' | base64 -d}
 

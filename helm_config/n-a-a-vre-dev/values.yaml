@@ -24,3 +24,4 @@ singleuser:
     VLAB_SLUG: "n-a-a-vre"
     # Variables normally set by Jupyter Hub
     JUPYTERHUB_USER: 'user'
+    ARGO_WF_SPEC_SERVICEACCOUNT: executor

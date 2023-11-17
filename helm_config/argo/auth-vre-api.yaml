@@ -2,11 +2,13 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: executor
+  namespace: default
 rules:
   - apiGroups:
       - argoproj.io
     resources:
       - workflowtaskresults
+      - workflows
     verbs:
       - create
       - patch
@@ -15,11 +17,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: executor
+  namespace: default
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: executor
+  namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -34,5 +38,6 @@ kind: Secret
 type: kubernetes.io/service-account-token
 metadata:
   name: executor.service-account-token
+  namespace: default
   annotations:
     kubernetes.io/service-account.name: executor
