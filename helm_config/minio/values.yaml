@@ -1,0 +1,23 @@
+auth:
+  rootPassword: "password"
+
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  hostname: "naavre-dev.minikube.test"
+  path: /minio/(.*)
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+
+extraEnvVars:
+    - name: MINIO_CONSOLE_SUBPATH
+      value: "/minio/"
+    - name: MINIO_BROWSER_REDIRECT_URL
+      value: "https://naavre-dev.minikube.test/minio/"
+
+
+apiIngress:
+  enabled: true
+  ingressClassName: "nginx"
+  hostname: "naavre-dev.minikube.test"
+  path: "/minio-api"
