@@ -14,6 +14,24 @@ extraEnvVars:
       value: "/minio/"
     - name: MINIO_BROWSER_REDIRECT_URL
       value: "https://naavre-dev.minikube.test/minio/"
+    - name : INIO_IDENTITY_OPENID_CONFIG_URL
+      valude: "https://openid-provider.example.net/.well-known/openid-configuration"
+    - name : MINIO_IDENTITY_OPENID_CLIENT_ID
+      valude: "my-client-id"
+    - name : MINIO_IDENTITY_OPENID_CLIENT_SECRET
+      valude: "my-client-secret"
+    - name : MINIO_IDENTITY_OPENID_CLAIM_NAME
+      valude: "email"
+    - name : MINIO_IDENTITY_OPENID_CLAIM_PREFIX
+      valude: "oidc:"
+    - name : MINIO_IDENTITY_OPENID_SCOPES
+      valude: "openid,email"
+    - name : MINIO_IDENTITY_OPENID_REDIRECT_URI
+      valude: "https://naavre-dev.minikube.test/minio/dex/callback"
+    - name : MINIO_IDENTITY_OPENID_COMMENT
+      valude: "My OpenID Connect Provider"
+
+
 
 
 apiIngress:
