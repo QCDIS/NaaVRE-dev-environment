@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  minio:
+    image: docker.io/bitnami/minio:2023
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - '/mnt/v00:/bitnami/minio/data'
+    env_file:
+      - ./minio.env
