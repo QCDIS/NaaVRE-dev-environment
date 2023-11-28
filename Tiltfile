@@ -149,3 +149,22 @@ docker_build(
   ],
   live_update=naavre_dev_sync_steps + naavre_dev_run_steps,
   )
+
+
+# Minio
+
+helm_remote(
+ 'minio',
+ repo_name='bitnami',
+ repo_url='https://charts.bitnami.com/bitnami',
+ version='12.10.3',
+ values=[
+   'helm_config/minio/values.yaml',
+   ]
+ )
+
+k8s_resource('minio', labels=['minio'],
+             links=['https://naavre-dev.minikube.test/minio/'])
+
+
+#docker_compose("docker_compose/minio/docker-compose.yml")
