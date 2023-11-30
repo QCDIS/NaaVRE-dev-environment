@@ -35,6 +35,7 @@ Setup a new conda environment and install dependencies:
 conda create --name naavre-dev
 conda activate naavre-dev
 conda install -c conda-forge pre_commit minikube kubernetes-helm tilt
+conda install -c anaconda-platform minio-client 
 ```
 
 ### Pre-commit hooks
@@ -166,6 +167,172 @@ To show changes to the NaaVRE component in Tilt:
 This is necessary because the Jupyter Lab pod is started dynamically by Jupyter Hub, which prevents Tilt from detecting when it should reload it.
 It is usually not necessary to reload the NaaVRE/hub and proxy resources, even if Tilt says it has changes.
 
+### Minio
+
+Admin interface: http://127.0.0.1:9001/
+
+| Account       | Username | Password   | Token          |
+|---------------|----------|------------|----------------|
+| Administrator | `admin`  | `password` |                |
+
+### Velero
+
+
+Before installing Velero, you need to create an access key and bucket. 
+To create the access kay and bucket access the Minio UI (http://127.0.0.1:9001/).
+
+#### Access key
+Create an access key with the following id and secret:
+```
+aws_access_key_id = minio
+aws_secret_access_key = minio123
+```
+
+After creating the key you need to specify its Access Key Policy to allow Velero to access the bucket `naavre-dev.minikube.test`:
+```yaml
+{
+ "Version": "2012-10-17",
+ "Statement": [
+  {
+   "Effect": "Allow",
+   "Action": [
+    "s3:GetBucketLocation",
+    "s3:ListBucket",
+    "s3:ListBucketMultipartUploads"
+   ],
+   "Resource": [
+    "arn:aws:s3:::naavre-dev.minikube.test"
+   ]
+  },
+  {
+   "Effect": "Allow",
+   "Action": [
+    "s3:AbortMultipartUpload",
+    "s3:DeleteObject",
+    "s3:GetObject",
+    "s3:ListMultipartUploadParts",
+    "s3:PutObject"
+   ],
+   "Resource": [
+    "arn:aws:s3:::naavre-dev.minikube.test/*"
+   ]
+  }
+ ]
+}
+```
+
+#### Bucket
+
+Create a bucket named `naavre-dev.minikube.test` and add the following access policy:
+```yaml
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "minio"
+                ]
+            },
+            "Action": [
+                "s3:GetBucketLocation",
+                "s3:ListBucket",
+                "s3:ListBucketMultipartUploads"
+            ],
+            "Resource": [
+                "arn:aws:s3:::naavre-dev.minikube.test"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "minio"
+                ]
+            },
+            "Action": [
+                "s3:DeleteObject",
+                "s3:GetObject",
+                "s3:ListMultipartUploadParts",
+                "s3:PutObject",
+                "s3:AbortMultipartUpload"
+            ],
+            "Resource": [
+                "arn:aws:s3:::naavre-dev.minikube.test/*"
+            ]
+        }
+    ]
+}
+```
+
+#### Install Velero
+
+Follow the instructions [here](https://velero.io/docs/v1.10/basic-install/) to install Velero.
+  
+```shell
+velero install --provider aws --use-node-agent --plugins velero/velero-plugin-for-aws:v1.2.1 \
+--bucket naavre-dev.minikube.test --secret-file ./credentials-velero --backup-location-config \
+region=minio,s3ForcePathStyle="true",s3Url=http://host.minikube.internal:9000
+```
+
+#### Backup and restore
+
+To backup a namespace:
+```shell
+velero backup create default-ns-backup --default-volumes-to-fs-backup --include-namespaces default --wait
+```
+
+You must apply an annotation to every pod which contains volumes for Velero to use FSB for the backup. For keycloak, we
+have annotated postgresql in helm_config/keycloak/values.yaml:
+```yaml
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: fake_postgres_password
+    password: fake_password
+  annotations:
+    backup.velero.io/backup-volumes: pvc-volume,emptydir-volume
+```
+
+To restore a namespace:
+```shell
+velero restore create --from-backup default-ns-backup
+```
+
+#### Simulate a disaster
+
+Find the container running Minikube:
+```shell
+docker ps | grep k8s-minikube
+```
+Access the container running Minikube
+```shell
+docker exec -it <container-id> /bin/bash
+```
+Delete the Keycloak postgresql data directory:
+
+```shell
+    rm -r  /tmp/hostpath-provisioner/default/data-keycloak-postgresql-0/
+```
+
+Go to https://naavre-dev.minikube.test/auth/. If the DB is missing, you won't be able to log in or you will get an error 
+message:
+```
+Unexpected Application Error!
+Network response was not OK.
+
+NetworkError@https://naavre-dev.minikube.test/auth/resources/9qowb/admin/keycloak.v2/assets/index-d73da1a7.js:67:43535
+fetchWithError@https://naavre-dev.minikube.test/auth/resources/9qowb/admin/keycloak.v2/assets/index-d73da1a7.js:67:43710
+```
+
+
+Restore the namespace:
+```shell
+velero restore create --from-backup default-ns-backup --wait
+```
+
+Try again to log in to Keycloak.
 
 ## Development cycle
 

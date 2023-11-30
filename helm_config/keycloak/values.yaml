@@ -27,6 +27,13 @@ postgresql:
   auth:
     postgresPassword: fake_postgres_password
     password: fake_password
+  primary:
+    podAnnotations:
+      backup.velero.io/backup-volumes: pvc-volume,emptydir-volume
+  readReplicas:
+    podAnnotations:
+      backup.velero.io/backup-volumes: pvc-volume,emptydir-volume
+
 
 keycloakConfigCli:
   enabled: true
