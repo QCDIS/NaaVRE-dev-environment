@@ -1,5 +1,7 @@
 auth:
   rootPassword: "password"
+  rootUser: "admin"
+  forceNewKeys: true
 
 ingress:
   enabled: true
