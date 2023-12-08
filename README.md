@@ -294,6 +294,13 @@ postgresql:
   annotations:
     backup.velero.io/backup-volumes: pvc-volume,emptydir-volume
 ```
+of 
+```yaml
+singleuser:
+  extraAnnotations:
+    backup.velero.io/backup-volumes: pvc-volume,emptydir-volume
+  cmd: ['/usr/local/bin/start-jupyter-venv.sh']
+```
 
 To restore a namespace:
 ```shell
