@@ -8,5 +8,18 @@ services:
       - '9001:9001'
     volumes:
       - '/mnt/v00:/bitnami/minio/data'
+#      - './certs:/certs'
     env_file:
       - ./minio.env
+
+#  nginx:
+#    image: nginx:latest
+#    ports:
+#      - '9000:9000'
+#      - '9001:9001'
+#    volumes:
+#      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+#      - ./certs/private.key:/root/ssl/private.key
+#      - ./certs/public.crt:/root/ssl/public.crt
+#    depends_on:
+#      - minio
