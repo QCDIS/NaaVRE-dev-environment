@@ -10,20 +10,34 @@ hub:
     OAUTH2_TLS_VERIFY: 'false'
   baseUrl: /n-a-a-vre
   config:
-    GenericOAuthenticator:
-      client_id: naavre
-      client_secret: fake_openid_client_secret
-      authorize_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/auth
-      token_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/token
-      userdata_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/userinfo
-      oauth_callback_url: https://naavre-dev.minikube.test/n-a-a-vre/hub/oauth_callback
-      login_service: keycloak
-      username_key: preferred_username
-      userdata_params:
-        state: state
+    Authenticator:
+      admin_users:
+      - admin
+      allowed_users:
+      - user
+    DummyAuthenticator:
+      password: user
     JupyterHub:
-      authenticator_class: generic-oauth
-      tls_verify: false
+      authenticator_class: dummy
+#    GenericOAuthenticator:
+#      client_id: naavre
+#      client_secret: fake_openid_client_secret
+#      authorize_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/auth
+#      token_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/token
+#      userdata_url: https://naavre-dev.minikube.test/auth/realms/vre/protocol/openid-connect/userinfo
+#      oauth_callback_url: https://naavre-dev.minikube.test/n-a-a-vre/hub/oauth_callback
+#      login_service: keycloak
+#      username_key: preferred_username
+#      userdata_params:
+#        state: state
+#      claim_groups_key: groups
+#      allowed_groups:
+#        - users
+#      admin_groups:
+#        - admins
+#    JupyterHub:
+#      authenticator_class: generic-oauth
+#      tls_verify: false
 ingress:
   enabled: true
   hosts:
@@ -43,6 +57,8 @@ prePuller:
   hook:
     enabled: false
 singleuser:
+  extraAnnotations:
+    backup.velero.io/backup-volumes: pvc-volume,emptydir-volume
   cmd: ['/usr/local/bin/start-jupyter-venv.sh']
   extraFiles:
     jupyter_notebook_config.json:
@@ -70,6 +86,10 @@ singleuser:
     SEARCH_API_TOKEN: ""
     VLAB_SLUG: n-a-a-vre
     ARGO_WF_SPEC_SERVICEACCOUNT: executor
+    VOL2BIRD_BASE_IMAGE_TAG: v2.1
+    MINICONDA3_PDAL_BASE_IMAGE_TAG: v0.14
+    R_BASE_IMAGE_TAG: 70178b8e48d7
+
   image:
     name: qcdis/n-a-a-vre-dev
     tag: latest
