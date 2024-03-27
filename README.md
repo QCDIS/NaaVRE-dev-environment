@@ -54,7 +54,7 @@ ggshield auth login
 
 The NaaVRE components are deployed by tilt to a local Kubernetes using minikube. We use ingress-dns to access those resources. To configure it, follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Choose your operating system.
 
-<details open>
+<details close>
 
    <summary>For Linux, pick the configuration matching your DNS setup (expand to read more)</summary>
 
@@ -83,13 +83,17 @@ During the initial setup, and after updating `submodules/VREPaaS-helm-charts`, r
 helm dependency build submodules/VREPaaS-helm-charts
 ```
 
+### GitHub repository for building cells
+
+To containerize cells from this dev environment, you need to set up a personal GitHub repository. It will be used to commit the cells code and build and publish the container images:
+1. Create your repository from the [QCDIS/NaaVRE-cells](https://github.com/QCDIS/NaaVRE-cells) template, and follow instructions from its README file to generate an access token.
+2. Set the values of `CELL_GITHUB` and `CELL_GITHUB_TOKEN` in [./helm_config/n-a-a-vre/values.yaml](./helm_config/n-a-a-vre/values.yaml) and [./helm_config/n-a-a-vre-dev/values.yaml](./helm_config/n-a-a-vre-dev/values.yaml).
+
 
 ## Run the dev environment
 
 ```shell
-minikube start
-minikube addons enable ingress
-minikube addons enable ingress-dns
+minikube start  --addons=ingress,ingress-dns
 tilt up
 ```
 
