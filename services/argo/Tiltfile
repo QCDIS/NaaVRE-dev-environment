@@ -17,8 +17,10 @@ k8s_resource(
   'argo-workflows-server',
   labels=['Argo'],
   links=['https://naavre-dev.minikube.test/argowf/'],
+  resource_deps=['keycloak'],
   )
 k8s_resource(
   'argo-workflows-workflow-controller',
   labels=['Argo'],
+  resource_deps=['keycloak'],
   )
