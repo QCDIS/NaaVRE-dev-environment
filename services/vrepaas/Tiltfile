@@ -11,11 +11,13 @@ k8s_resource(
   labels=['VREPaaS'],
   links=['https://naavre-dev.minikube.test/vre-api-test/api/',
          'https://naavre-dev.minikube.test/vre-api-test/admin/'],
+  resource_deps=['keycloak'],
   )
 k8s_resource(
   'vrepaas-vreapp',
   labels=['VREPaaS'],
   links=[ 'https://naavre-dev.minikube.test/vreapp/'],
+  resource_deps=['keycloak'],
   )
 k8s_resource(
   'vrepaas-postgresql',
