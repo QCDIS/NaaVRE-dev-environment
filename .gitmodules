@@ -1,9 +1,9 @@
 [submodule "submodules/VREPaaS-helm-charts"]
-	path = submodules/VREPaaS-helm-charts
+	path = services/vrepaas/submodules/VREPaaS-helm-charts
 	url = git@github.com:QCDIS/VREPaaS-helm-charts.git
 [submodule "submodules/VREPaaS"]
-	path = submodules/VREPaaS
+	path = services/vrepaas/submodules/VREPaaS
 	url = git@github.com:QCDIS/VREPaaS.git
 [submodule "submodules/NaaVRE"]
-	path = submodules/NaaVRE
+	path = services/naavre/submodules/NaaVRE
 	url = git@github.com:QCDIS/NaaVRE.git
