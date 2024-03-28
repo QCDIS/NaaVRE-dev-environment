@@ -12,8 +12,9 @@ To integrate the different components of NaaVRE, we use Git submodules:
 git clone --recurse-submodules git@github.com:QCDIS/NaaVRE-dev-environment.git
 ```
 
-if you get an error:
-```commandline
+If you get an error:
+
+```
 Cloning into 'NaaVRE-dev-environment'...
 git@github.com: Permission denied (publickey).
 fatal: Could not read from remote repository.
@@ -21,6 +22,7 @@ fatal: Could not read from remote repository.
 Please make sure you have the correct access rights
 and the repository exists.
 ```
+
 then you need to add your ssh key to your GitHub account. Follow the instructions [here](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account).
 
 Check out the [Git Submodules documentation](https://git-scm.com/book/en/v2/Git-Tools-Submodules).
@@ -54,7 +56,7 @@ ggshield auth login
 
 The NaaVRE components are deployed by tilt to a local Kubernetes using minikube. We use ingress-dns to access those resources. To configure it, follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Choose your operating system.
 
-<details close>
+<details>
 
    <summary>For Linux, pick the configuration matching your DNS setup (expand to read more)</summary>
 
@@ -87,7 +89,7 @@ helm dependency build submodules/VREPaaS-helm-charts
 
 To containerize cells from this dev environment, you need to set up a personal GitHub repository. It will be used to commit the cells code and build and publish the container images:
 1. Create your repository from the [QCDIS/NaaVRE-cells](https://github.com/QCDIS/NaaVRE-cells) template, and follow instructions from its README file to generate an access token.
-2. Set the values of `CELL_GITHUB` and `CELL_GITHUB_TOKEN` in [./helm_config/n-a-a-vre/values.yaml](./helm_config/n-a-a-vre/values.yaml) and [./helm_config/n-a-a-vre-dev/values.yaml](./helm_config/n-a-a-vre-dev/values.yaml).
+2. Set the values of `CELL_GITHUB` and `CELL_GITHUB_TOKEN` in [./services/naavre/helm/values-integration.yaml](services/naavre/helm/values-integration.yaml) and [./services/naavre-dev/helm/values-dev.yaml](services/naavre/helm/values-dev.yaml).
 
 
 ## Run the dev environment
@@ -97,7 +99,7 @@ minikube start  --addons=ingress,ingress-dns
 tilt up
 ```
 
-Once Argo is up and running, run `token=$(kubectl get secret vre-api.service-account-token -o jsonpath='{.data.token}' | base64 -d); echo "Bearer $token"` and add the output to `global.argo.token` in [./helm_config/vrepaas/values.yaml](./helm_config/vrepaas/values.yaml).
+Once Argo is up and running, run `token=$(kubectl get secret vre-api.service-account-token -o jsonpath='{.data.token}' | base64 -d); echo "Bearer $token"` and add the output to `global.argo.token` in [services/vrepaas/helm/values.yaml](services/vrepaas/helm/values.yaml).
 
 Optional: 
 
@@ -156,9 +158,9 @@ No authentication.
 
 This version of NaaVRE runs Jupyter Lab alone (i.e. without Jupyter Hub), and updates automatically when the NaaVRE code is changed. It is suited for testing NaaVRE features, but not for testing integration (in that case, see NaaVRE section below).
 
-### NaaVRE
+### NaaVRE-integration
 
-https://naavre-dev.minikube.test/n-a-a-vre/
+https://naavre-dev.minikube.test/n-a-a-vre-integration/
 
 Login through keycloak.
 
@@ -276,7 +278,7 @@ Follow the instructions [here](https://velero.io/docs/v1.10/basic-install/) to i
   
 ```shell
 velero install --provider aws --use-node-agent --plugins velero/velero-plugin-for-aws:v1.2.1 \
---bucket naavre-dev.minikube.test --secret-file ./credentials-velero --backup-location-config \
+--bucket naavre-dev.minikube.test --secret-file ./services/velero/credentials-velero --backup-location-config \
 region=minio,s3ForcePathStyle="true",s3Url=http://host.minikube.internal:9000
 ```
 

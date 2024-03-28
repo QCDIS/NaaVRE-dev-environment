@@ -8,7 +8,7 @@ hub:
   shutdownOnLogout: true
   extraEnv:
     OAUTH2_TLS_VERIFY: 'false'
-  baseUrl: /n-a-a-vre
+  baseUrl: /n-a-a-vre-integration
   config:
     GenericOAuthenticator:
       client_id: naavre
