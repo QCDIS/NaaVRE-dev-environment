@@ -4,6 +4,8 @@ Integrated development environment for NaaVRE
 
 ## Getting started
 
+*Run these steps once, when setting up the environment.*
+
 ### Git setup
 
 To integrate the different components of NaaVRE, we use Git submodules:
@@ -82,7 +84,7 @@ The NaaVRE components are deployed by tilt to a local Kubernetes using minikube.
 During the initial setup, and after updating `submodules/VREPaaS-helm-charts`, run:
 
 ```shell
-helm dependency build submodules/VREPaaS-helm-charts
+helm dependency build services/vrepaas/submodules/VREPaaS-helm-charts
 ```
 
 ### GitHub repository for building cells
@@ -94,24 +96,90 @@ To containerize cells from this dev environment, you need to set up a personal G
 
 ## Run the dev environment
 
+*Run these steps every time you want to start the dev environment.*
+
+### Start minikube
+
 ```shell
 minikube start  --addons=ingress,ingress-dns
-tilt up
-```
-
-Once Argo is up and running, run `token=$(kubectl get secret vre-api.service-account-token -o jsonpath='{.data.token}' | base64 -d); echo "Bearer $token"` and add the output to `global.argo.token` in [services/vrepaas/helm/values.yaml](services/vrepaas/helm/values.yaml).
-
-Optional: 
-
-```shell
+# Optional:
 minikube dashboard --url
 ```
 
-To reset the environment, exit Tilt and run:
+### Start the services needed by NaaVRE
 
 ```shell
-minikube delete
+tilt up
 ```
+
+This will open the Tilt dashboard in your browser, and deploy the services needed by NaaVRE.
+
+After starting Tilt, we need to configure the connection between Argo and the VREPaaS. To that end, open a terminal and run `token=$(kubectl get secret vre-api.service-account-token -o jsonpath='{.data.token}' | base64 -d); echo "Bearer $token"`. Next, edit [services/vrepaas/helm/values.yaml](services/vrepaas/helm/values.yaml) add the output of the previous command (`Bearer ey.....`) to `global.argo.token`.
+
+### Start NaaVRE
+
+There three options for starting NaaVRE
+
+#### Option 1: Run NaaVRE locally
+
+Run the NaaVRE dev server locally (e.g. from a separate clone of the repository).
+
+To that end, follow the instructions from https://github.com/QCDIS/NaaVRE/blob/main/README.md#development, creating the file `export_VARS` containing:
+
+```
+export API_ENDPOINT="https://naavre-dev.minikube.test/vre-api-test"
+export ARGO_WF_SPEC_SERVICEACCOUNT="executor"
+export CELL_GITHUB=""
+export CELL_GITHUB_TOKEN=""
+export JUPYTERHUB_SINGLEUSER_APP="jupyter_server.serverapp.ServerApp"
+export JUPYTERHUB_USER="user"
+export MODULE_MAPPING_URL="https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json"
+export NAAVRE_API_TOKEN="token_vreapi"
+export PROJ_LIB="/venv/share/proj"
+export SEARCH_API_ENDPOINT=""
+export SEARCH_API_TOKEN=""
+export VLAB_SLUG="n-a-a-vre"
+```
+
+(Fill in your values for `CELL_GITHUB` and `CELL_GITHUB_TOKEN`.)
+
+This option is recommended when developing NaaVRE Jupyter lab extensions, because it provides the fastest reloading on code changes.
+
+#### Option 2: Run NaaVRE with Tilt (Jupyter Lab only)
+
+Run a dev image of NaaVRE with Tilt, built from [./services/naavre/submodules/NaaVRE](./services/naavre/submodules/NaaVRE). This option deploys NaaVRE as a standalone Jupyter Lab service.
+
+To that end, run the following command (if you already ran `tilt up`, stop it first):
+
+```shell
+tilt up naavre-dev
+```
+
+This option is recommended when jointly developing NaaVRE and the VREPaaS, if you don’t need to test integration between NaaVRE Jupyter hub or Keycloak.
+
+#### Option 3: Run NaaVRE with Tilt (Jupyter Hub integration)
+
+Similar to option 2, but NaaVRE is deployed through Jupyter Hub.
+
+To that end, run:
+
+```shell
+tilt up naavre-integration
+```
+
+This option is recommended to test integration of NaaVRE with Jupyter Hub or Keycloak.
+
+### Start extra services (optional)
+
+To test the integration of extra services, run:
+
+```shell
+tilt up [naavre-dev|naavre-integration] extras
+```
+
+### Resetting the dev environment
+
+To reset the services, exit tilt and run `tilt down`. To fully reset the minikube cluster, run `minikube delete`.
 
 
 ## Access the services
@@ -173,6 +241,49 @@ To show changes to the NaaVRE component in Tilt:
 This is necessary because the Jupyter Lab pod is started dynamically by Jupyter Hub, which prevents Tilt from detecting when it should reload it.
 It is usually not necessary to reload the NaaVRE/hub and proxy resources, even if Tilt says it has changes.
 
+
+## Development cycle
+
+The different components of NaaVRE have their own Git repositories, which are included as submodules of the NaaVRE-dev-environment repository. In the context of the dev repo, these submodules are references to a commit in the component repo.
+When in root directory of this repo, `git` commands apply to the NaaVRE-dev-environment repo.
+When in the submodule directory, `git` commands apply to the submodule repo.
+
+For any development task, follow this cycle:
+
+1. On GitHub, create an issue in the appropriate component repository
+2. Create a branch linked to the issue (e.g. `nnn-my-branch`)
+3. Checkout this branch in the submodule:
+
+   ```bash
+   cd services/component/submodules/COMPONENT
+   git fetch origin
+   git checkout nnn-my-branch
+   ```
+
+4. Edit code in the submodule while checking the changes with Tilt
+
+   *Note:* During development, running `git status` in the NaaVRE-dev-environment root directory will show unstaged changes to the submodule, such as `modified: submodule/COMPONENT (untracked content)` or `(new commits)`.
+
+5. Commit and push changes from the submodule directory
+6. On GitHub, create a pull request in the submodule repo
+7. Once it is merged:
+   - In the submodule directory, switch back to the main branch and pull the latest changes
+   - In the NaaVRE-dev-environment directory, stage and commit the changes to the submodule. An appropriate commit message would be “update COMPONENT ref merging COMPONENT/nnn-my-branch”
+
+
+## Troubleshooting
+
+### Context deadline exceeded when pulling NaaVRE image
+
+If you get an error similar to `Failed to pull image "qcdis/n-a-a-vre-laserfarm:v2.0-beta": rpc error: code = Unknown desc = context deadline exceeded` in the `continuous-image-puller` logs:
+
+- Reset the cluster (`minikube delete` and re-run the startup commands)
+- Run `minikube image load qcdis/n-a-a-vre-laserfarm:v2.0-beta` in your terminal
+- Run tilt
+
+
+## Extra services
+
 ### Minio
 
 Admin interface: http://127.0.0.1:9001/
@@ -184,7 +295,7 @@ Admin interface: http://127.0.0.1:9001/
 ### Velero
 
 
-Before installing Velero, you need to create an access key and bucket. 
+Before installing Velero, you need to create an access key and bucket.
 To create the access kay and bucket access the Minio UI (http://127.0.0.1:9001/).
 
 #### Access key
@@ -275,7 +386,7 @@ Create a bucket named `naavre-dev.minikube.test` and add the following access po
 #### Install Velero
 
 Follow the instructions [here](https://velero.io/docs/v1.10/basic-install/) to install Velero.
-  
+
 ```shell
 velero install --provider aws --use-node-agent --plugins velero/velero-plugin-for-aws:v1.2.1 \
 --bucket naavre-dev.minikube.test --secret-file ./services/velero/credentials-velero --backup-location-config \
@@ -300,7 +411,7 @@ postgresql:
   annotations:
     backup.velero.io/backup-volumes: pvc-volume,emptydir-volume
 ```
-of 
+of
 ```yaml
 singleuser:
   extraAnnotations:
@@ -329,7 +440,7 @@ Delete the Keycloak postgresql data directory:
     rm -r  /tmp/hostpath-provisioner/default/data-keycloak-postgresql-0/
 ```
 
-Go to https://naavre-dev.minikube.test/auth/. If the DB is missing, you won't be able to log in or you will get an error 
+Go to https://naavre-dev.minikube.test/auth/. If the DB is missing, you won't be able to log in or you will get an error
 message:
 ```
 Unexpected Application Error!
@@ -346,42 +457,3 @@ velero restore create --from-backup default-ns-backup --wait
 ```
 
 Try again to log in to Keycloak.
-
-## Development cycle
-
-The different components of NaaVRE have their own Git repositories, which are included as submodules of the NaaVRE-dev-environment repository. In the context of the dev repo, these submodules are references to a commit in the component repo.
-When in root directory of this repo, `git` commands apply to the NaaVRE-dev-environment repo.
-When in the submodule directory, `git` commands apply to the submodule repo.
-
-For any development task, follow this cycle:
-
-1. On GitHub, create an issue in the appropriate component repository
-2. Create a branch linked to the issue (e.g. `nnn-my-branch`)
-3. Checkout this branch in the submodule:
-
-   ```bash
-   cd submodules/COMPONENT
-   git fetch origin
-   git checkout nnn-my-branch
-   ```
-
-4. Edit code in the submodule while checking the changes with Tilt
-
-   *Note:* During development, running `git status` in the NaaVRE-dev-environment root directory will show unstaged changes to the submodule, such as `modified: submodule/COMPONENT (untracked content)` or `(new commits)`.
-
-5. Commit and push changes from the submodule directory
-6. On GitHub, create a pull request in the submodule repo
-7. Once it is merged:
-   - In the submodule directory, switch back to the main branch and pull the latest changes
-   - In the NaaVRE-dev-environment directory, stage and commit the changes to the submodule. An appropriate commit message would be “update COMPONENT ref merging COMPONENT/nnn-my-branch”
-
-
-## Troubleshooting
-
-### Context deadline exceeded when pulling NaaVRE image
-
-If you get an error similar to `Failed to pull image "qcdis/n-a-a-vre-laserfarm:v2.0-beta": rpc error: code = Unknown desc = context deadline exceeded` in the `continuous-image-puller` logs:
-
-- Reset the cluster (`minikube delete` and re-run the startup commands)
-- Run `minikube image load qcdis/n-a-a-vre-laserfarm:v2.0-beta` in your terminal
-- Run tilt
