@@ -9,8 +9,9 @@
 #    ]
 # )
 #
-# k8s_resource('minio', labels=['minio'],
+# k8s_resource('minio', labels=['Minio'],
 #              links=['https://naavre-dev.minikube.test/minio/'])
 
 
 docker_compose("./docker-compose/docker-compose.yml")
+dc_resource('minio', labels=['Minio'])
