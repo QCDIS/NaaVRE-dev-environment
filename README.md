@@ -1,6 +1,13 @@
 # NaaVRE-dev-environment
-Integrated development environment for NaaVRE
 
+Integrated development environment for NaaVRE.
+
+OS support:
+
+- ✅ Linux (tested on Ubuntu 22.04 and Arch Linux)
+- ❌ Windows (user report: some conda packages cannot be installed)
+- ❌ WSL2 (user report: Minikube ingress DNS does not work)
+- ❔ macOS
 
 ## Getting started
 
