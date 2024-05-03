@@ -173,7 +173,7 @@ This option is recommended to test integration of NaaVRE with Jupyter Hub or Key
 To test the integration of extra services, run:
 
 ```shell
-tilt up [naavre-dev|naavre-integration] extras
+tilt enable [n-a-a-vre-dev hub proxy user-placeholder user-scheduler] minio
 ```
 
 ### Resetting the dev environment
