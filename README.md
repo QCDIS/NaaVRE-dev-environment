@@ -142,16 +142,16 @@ export VLAB_SLUG="n-a-a-vre"
 
 (Fill in your values for `CELL_GITHUB` and `CELL_GITHUB_TOKEN`.)
 
-This option is recommended when developing NaaVRE Jupyter lab extensions, because it provides the fastest reloading on code changes.
+This option is recommended when developing NaaVRE Jupyter lab extensions, because it provides the fastest reloading on code changes. However, is options 2 and 3 are easier to setup.
 
 #### Option 2: Run NaaVRE with Tilt (Jupyter Lab only)
 
 Run a dev image of NaaVRE with Tilt, built from [./services/naavre/submodules/NaaVRE](./services/naavre/submodules/NaaVRE). This option deploys NaaVRE as a standalone Jupyter Lab service.
 
-To that end, run the following command (if you already ran `tilt up`, stop it first):
+To that end, run the following command (make sure `tilt up` is running):
 
 ```shell
-tilt up naavre-dev
+tilt enable n-a-a-vre-dev
 ```
 
 This option is recommended when jointly developing NaaVRE and the VREPaaS, if you don’t need to test integration between NaaVRE Jupyter hub or Keycloak.
@@ -160,10 +160,10 @@ This option is recommended when jointly developing NaaVRE and the VREPaaS, if yo
 
 Similar to option 2, but NaaVRE is deployed through Jupyter Hub.
 
-To that end, run:
+To that end, run the following command (make sure `tilt up` is running):
 
 ```shell
-tilt up naavre-integration
+tilt enable n-a-a-vre-dev hub proxy user-placeholder user-scheduler
 ```
 
 This option is recommended to test integration of NaaVRE with Jupyter Hub or Keycloak.
