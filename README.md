@@ -115,6 +115,8 @@ This will open the Tilt dashboard in your browser, and deploy the services neede
 
 After starting Tilt, we need to configure the connection between Argo and the VREPaaS. To that end, open a terminal and run `token=$(kubectl get secret vre-api.service-account-token -o jsonpath='{.data.token}' | base64 -d); echo "Bearer $token"`. Next, edit [services/vrepaas/helm/values.yaml](services/vrepaas/helm/values.yaml) add the output of the previous command (`Bearer ey.....`) to `global.argo.token`.
 
+After updating the helm values, open the Tilt web interface, wait for the `Tiltfile` resource to update, and trigger a manual update on `vrepaas-vreapi`.
+
 ### Start NaaVRE
 
 There three options for starting NaaVRE
