@@ -144,7 +144,9 @@ export VLAB_SLUG="n-a-a-vre"
 
 (Fill in your values for `CELL_GITHUB` and `CELL_GITHUB_TOKEN`.)
 
-This option is recommended when developing NaaVRE Jupyter lab extensions, because it provides the fastest reloading on code changes. However, is options 2 and 3 are easier to setup.
+This option is recommended when developing NaaVRE Jupyter lab extensions, because it provides the fastest reloading on code changes.
+
+Note: when using this option, NaaVRE should be accessed through the direct [link](#naavre-dev). Launching virtual labs from the VREPaaS UI will not work.
 
 #### Option 2: Run NaaVRE with Tilt (Jupyter Lab only)
 
@@ -157,6 +159,8 @@ tilt enable n-a-a-vre-dev
 ```
 
 This option is recommended when jointly developing NaaVRE and the VREPaaS, if you don’t need to test integration between NaaVRE Jupyter hub or Keycloak.
+
+Note: when using this option, NaaVRE should be accessed through the direct [link](#naavre-dev). Launching virtual labs from the VREPaaS UI will not work.
 
 #### Option 3: Run NaaVRE with Tilt (Jupyter Hub integration)
 
