@@ -130,8 +130,8 @@ To that end, follow the instructions from https://github.com/QCDIS/NaaVRE/blob/m
 ```
 export API_ENDPOINT="https://naavre-dev.minikube.test/vre-api-test"
 export ARGO_WF_SPEC_SERVICEACCOUNT="executor"
-export CELL_GITHUB=""
-export CELL_GITHUB_TOKEN=""
+export CELL_GITHUB="<the repository you created above>"
+export CELL_GITHUB_TOKEN="<the token to access this repo>"
 export JUPYTERHUB_SINGLEUSER_APP="jupyter_server.serverapp.ServerApp"
 export JUPYTERHUB_USER="user"
 export MODULE_MAPPING_URL="https://raw.githubusercontent.com/QCDIS/NaaVRE-conf/main/module_mapping.json"
@@ -140,6 +140,7 @@ export PROJ_LIB="/venv/share/proj"
 export SEARCH_API_ENDPOINT=""
 export SEARCH_API_TOKEN=""
 export VLAB_SLUG="n-a-a-vre"
+export VRE_API_VERIFY_SSL="false"
 ```
 
 (Fill in your values for `CELL_GITHUB` and `CELL_GITHUB_TOKEN`.)
