@@ -4,6 +4,6 @@ metadata:
   name: {{ include "n-a-a-vre-dev.fullname" . }}
 data:
   {{- range $key, $value := .Values.singleuser.extraEnv }}
-  {{ $key }}: {{ $value }}
+  {{ $key }}: "{{ $value }}"
   {{- end}}
   NOTEBOOK_ARGS: "--NotebookApp.base_url={{ .Values.singleuser.baseUrl }} --NotebookApp.token=''"
