@@ -23,3 +23,4 @@ singleuser:
     # Variables normally set by Jupyter Hub
     JUPYTERHUB_USER: 'user'
     ARGO_WF_SPEC_SERVICEACCOUNT: executor
+    VRE_API_VERIFY_SSL: 'false'
