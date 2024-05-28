@@ -211,6 +211,14 @@ Login through keycloak.
 |---------------------------|---------|
 | `vre-api` service account | Dynamic |
 
+### K8s-secret-creator
+
+https://naavre-dev.minikube.test/k8s-secret-creator/1.0.0/ui/
+
+| Account              | Token       |
+|----------------------|-------------|
+| Token authentication | `token_ksc` |
+
 ### VREPaaS
 
 UI: https://naavre-dev.minikube.test/vreapp

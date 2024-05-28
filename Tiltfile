@@ -10,6 +10,9 @@ groups = {
     'argo-workflows-server',
     'argo-workflows-workflow-controller',
     ],
+  'k8s-secret-creator': [
+    'k8s-secret-creator',
+    ],
   'vrepaas': [
     'vrepaas-vreapi',
     'vrepaas-vreapp',
@@ -32,6 +35,7 @@ groups = {
 default_groups = [
   'keycloak',
   'argo',
+  'k8s-secret-creator',
   'vrepaas',
   ]
 groups_to_run = cfg.get('groups-to-run', [])
@@ -46,6 +50,7 @@ config.set_enabled_resources(resources)
 
 include('services/keycloak/Tiltfile')
 include('services/argo/Tiltfile')
+include('services/k8s-secret-creator/Tiltfile')
 include('services/vrepaas/Tiltfile')
 include('services/naavre/image.Tiltfile')
 include('services/naavre/dev.Tiltfile')
