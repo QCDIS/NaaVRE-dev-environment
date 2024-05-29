@@ -20,6 +20,10 @@ global:
     url: https://naavre-dev.minikube.test/argowf
     token: Bearer {output of kubectl get secret vre-api.service-account-token -o jsonpath='{.data.token}' | base64 -d}
 
+  k8s_secret_creator:
+    url: https://naavre-dev.minikube.test/k8s-secret-creator/1.0.0/
+    token: token_ksc
+
 vreapi:
   secret_key: "dev_secret_key_vreapi"
   auth:
