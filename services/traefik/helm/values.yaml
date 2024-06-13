@@ -5,10 +5,15 @@ service:
   single: true
   type: NodePort
 
+ingressClass:
+  enabled: true
+  isDefaultClass: false
+  name: traefik
+
 
 ingressRoute:
   dashboard:
-    enabled: false
+    enabled: true
 additionalArguments:
 - "--api.insecure=true"
 # Create the service, middleware and Ingress used to expose the dashboard (can also be created in another way).
@@ -26,7 +31,7 @@ extraObjects:
       ports:
       - port: 8080
         name: traefik
-        targetPort: 9003
+        targetPort: 9000
         protocol: TCP
 
   - apiVersion: v1
@@ -67,29 +72,7 @@ extraObjects:
                   name: traefik
 
 ports:
-  traefik:
-    port: 9003
   web:
-    ## -- Enable this entrypoint as a default entrypoint. When a service doesn't explicitly set an entrypoint it will only use this entrypoint.
-    # asDefault: true
-    port: 8001
-    hostPort: 8001
-    containerPort: 8001
-    expose:
-      default: true
-    exposedPort: 81
-    nodePort: 32081
+    nodePort: 32080
   websecure:
-    ## -- Enable this entrypoint as a default entrypoint. When a service doesn't explicitly set an entrypoint it will only use this entrypoint.
-    # asDefault: true
-    port: 8444
-    hostPort: 8444
-    containerPort: 8444
-    expose:
-      default: true
-    exposedPort: 444
-    ## -- Different target traefik port on the cluster, useful for IP type LB
-    # targetPort: 80
-    ## -- The port protocol (TCP/UDP)
-    protocol: TCP
     nodePort: 32444
