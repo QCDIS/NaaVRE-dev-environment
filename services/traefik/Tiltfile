@@ -13,5 +13,5 @@ helm_remote(
 k8s_resource(
   'traefik',
   labels=['traefik'],
-  links=['https://minikube.test/traefik/']
+  links=['https://traefik.test:32444','https://traefik.test:32444/dashboard/#/']
   )
