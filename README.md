@@ -58,10 +58,34 @@ pre-commit install
 ggshield auth login
 ```
 
+### Helm dependencies
+
+During the initial setup, and after updating `submodules/VREPaaS-helm-charts`, run:
+
+```shell
+helm dependency build services/vrepaas/submodules/VREPaaS-helm-charts
+```
+
+### GitHub repository for building cells
+
+To containerize cells from this dev environment, you need to set up a personal GitHub repository. It will be used to commit the cells code and build and publish the container images:
+1. Create your repository from the [QCDIS/NaaVRE-cells](https://github.com/QCDIS/NaaVRE-cells) template, and follow instructions from its README file to generate an access token.
+2. Set the values of `CELL_GITHUB` and `CELL_GITHUB_TOKEN` in [./services/naavre/helm/values-integration.yaml](services/naavre/helm/values-integration.yaml) and [./services/naavre-dev/helm/values-dev.yaml](services/naavre/helm/values-dev.yaml).
+
+
 ### Minikube cluster
 
-The NaaVRE components are deployed by tilt to a local Kubernetes using
-minikube. We use ingress-dns to access those resources. To configure it, start minikube (`minikube start`), and follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Choose your operating system.
+The NaaVRE component are deployed by tilt to a minikube cluster.
+There are two options for running minikube: using a pre-configured [NaaVRE-dev-vm](https://github.com/QCDIS/NaaVRE-dev-vm), using a self-managed Minikube cluster.
+
+#### Using a pre-configured VM (NaaVRE-dev-vm)
+
+If you are provided with a development VM, follow these instructions: [Using the VM (for developers)](https://github.com/QCDIS/NaaVRE-dev-vm/blob/main/README.md#using-the-vm-for-developers).
+
+
+#### Using a self-managed Minikube cluster
+
+We use ingress-dns to access the resources deployed on the minikube cluster. To configure it, start minikube (`minikube start`), and follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Choose your operating system.
 
 For Linux, pick the configuration matching your distribution's DNS setup. To find the DNS setup, run `head /etc/resolv.conf`:
 
@@ -78,26 +102,14 @@ EOF
 sudo systemctl restart systemd-resolved
 ```
 
-### Helm dependencies
-
-During the initial setup, and after updating `submodules/VREPaaS-helm-charts`, run:
-
-```shell
-helm dependency build services/vrepaas/submodules/VREPaaS-helm-charts
-```
-
-### GitHub repository for building cells
-
-To containerize cells from this dev environment, you need to set up a personal GitHub repository. It will be used to commit the cells code and build and publish the container images:
-1. Create your repository from the [QCDIS/NaaVRE-cells](https://github.com/QCDIS/NaaVRE-cells) template, and follow instructions from its README file to generate an access token.
-2. Set the values of `CELL_GITHUB` and `CELL_GITHUB_TOKEN` in [./services/naavre/helm/values-integration.yaml](services/naavre/helm/values-integration.yaml) and [./services/naavre-dev/helm/values-dev.yaml](services/naavre/helm/values-dev.yaml).
-
 
 ## Run the dev environment
 
 *Run these steps every time you want to start the dev environment.*
 
 ### Start minikube
+
+(Skip this step if you are using a [self-managed Minikube cluster](#using-a-self-managed-minikube-cluster).)
 
 ```shell
 minikube start  --addons=ingress,ingress-dns
