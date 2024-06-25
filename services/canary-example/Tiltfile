@@ -1,0 +1,14 @@
+k8s_yaml(
+['deployment-production.yaml',
+'service-production.yaml',
+'ingress-production.yaml',
+'canary.yaml']
+)
+
+
+k8s_resource('canary-example-production',
+  labels=['canary-example'],
+    links=[
+    'https://echo.minikube.test',
+    ],
+)
