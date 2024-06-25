@@ -24,11 +24,12 @@ k8s_resource(
   labels=['VREPaaS'],
   )
 
-docker_build(
+custom_build(
     'qcdis/vreapi',
-    context='./submodules/VREPaaS',
-    dockerfile='./submodules/VREPaaS/tilt/vreapis/Dockerfile',
-    only=['./vreapis/'],
+    'docker buildx build ./submodules/VREPaaS -f ./submodules/VREPaaS/tilt/vreapis/Dockerfile -t $EXPECTED_REF --push',
+    ['./submodules/VREPaaS/vreapis'],
+    skips_local_docker=True,
+    disable_push=True,
     entrypoint='/app/entrypoint.dev.sh',
     live_update=[
         sync('./submodules/VREPaaS/vreapis', '/app'),
@@ -38,11 +39,12 @@ docker_build(
              trigger='./submodules/VREPaaS/vreapis/requirements.txt'),
     ],
 )
-docker_build(
+custom_build(
     'qcdis/vreapp',
-    context='./submodules/VREPaaS',
-    dockerfile='./submodules/VREPaaS/tilt/vre-panel/Dockerfile',
-    only=['./vre-panel/'],
+    'docker buildx build ./submodules/VREPaaS -f ./submodules/VREPaaS/tilt/vre-panel/Dockerfile -t $EXPECTED_REF --push',
+    ['./submodules/VREPaaS/vre-panel'],
+    skips_local_docker=True,
+    disable_push=True,
     live_update=[
         sync('./submodules/VREPaaS/vre-panel', '/app'),
         run('cd /app && npm install',
