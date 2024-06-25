@@ -180,7 +180,7 @@ This option is recommended to test integration of NaaVRE with Jupyter Hub or Key
 To test the integration of extra services, run:
 
 ```shell
-tilt enable [n-a-a-vre-dev hub proxy user-placeholder user-scheduler] minio traefik
+tilt enable [n-a-a-vre-dev hub proxy user-placeholder user-scheduler] minio traefik canary-example-production
 ```
 
 ### Resetting the dev environment

@@ -31,6 +31,7 @@ groups = {
   'extras': [
     'minio',
     'traefik',
+    'canary-example-production',
     ],
   }
 default_groups = [
@@ -58,3 +59,4 @@ include('services/naavre/dev.Tiltfile')
 include('services/naavre/integration.Tiltfile')
 include('services/minio/Tiltfile')
 include('services/traefik/Tiltfile')
+include('services/canary-example/Tiltfile')
