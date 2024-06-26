@@ -1,0 +1,19 @@
+k8s_yaml(
+['canary-example-production.yaml','canary-example-canary.yaml'],
+)
+
+
+k8s_resource('square-root-v2',
+  labels=['canary-example'],
+    links=[
+    'http://naavre-dev.minikube.test/square-root/',
+    ],
+)
+
+
+k8s_resource('square-root-v3',
+  labels=['canary-example'],
+    links=[
+    'http://naavre-dev.minikube.test/square-root/',
+    ],
+)
