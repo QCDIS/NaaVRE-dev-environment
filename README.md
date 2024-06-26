@@ -256,6 +256,25 @@ This is necessary because the Jupyter Lab pod is started dynamically by Jupyter 
 It is usually not necessary to reload the NaaVRE/hub and proxy resources, even if Tilt says it has changes.
 
 
+### Canary example 
+http://naavre-dev.minikube.test/square-root/
+
+This is a simple example showing how to do canary deployments. 
+To test it enable both versions of the square-root-v2 and square-root-v3 services. 
+```shell
+tilt enable square-root-v3 square-root-v2
+```
+
+To see that 50% of the requests are going to each version access open your browser to 
+http://naavre-dev.minikube.test/square-root/4 and send 10 requests (press f5 10 times).
+
+Open the tilt dashboard and check the 'canary-example' resources logs of the services to see that the requests are 
+being distributed between the two versions.
+
+To change the percentage of requests going to each version change the values in the `services/canary-example/canary-example-canary.yaml` 
+file in the Ingress look for the `nginx.ingress.kubernetes.io/canary-weight` annotation and change the values to the desired
+
+
 ## Development cycle
 
 The different components of NaaVRE have their own Git repositories, which are included as submodules of the NaaVRE-dev-environment repository. In the context of the dev repo, these submodules are references to a commit in the component repo.
