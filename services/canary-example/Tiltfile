@@ -1,14 +1,19 @@
 k8s_yaml(
-['deployment-production.yaml',
-'service-production.yaml',
-'ingress-production.yaml',
-'canary.yaml']
+['canary-example-production.yaml','canary-example-canary.yaml'],
 )
 
 
-k8s_resource('canary-example-production',
+k8s_resource('square-root-v2',
   labels=['canary-example'],
     links=[
-    'https://echo.minikube.test',
+    'http://naavre-dev.minikube.test/square-root/',
+    ],
+)
+
+
+k8s_resource('square-root-v3',
+  labels=['canary-example'],
+    links=[
+    'http://naavre-dev.minikube.test/square-root/',
     ],
 )
