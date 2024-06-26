@@ -31,7 +31,8 @@ groups = {
   'extras': [
     'minio',
     'traefik',
-    'canary-example-production',
+    'square-root-v2',
+    'square-root-v3',
     ],
   }
 default_groups = [
