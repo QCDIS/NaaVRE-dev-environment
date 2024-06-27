@@ -1,0 +1,20 @@
+grafana:
+  enabled: true
+  adminPassword: prom-operator
+  grafana.ini:
+    server:
+      domain: naavre-dev.minikube.test
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+      serve_from_sub_path: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+        - naavre-dev.minikube.test
+    path: /grafana
+
+  persistence:
+    enabled: true
+
+
+

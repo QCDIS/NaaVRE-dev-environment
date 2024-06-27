@@ -180,7 +180,7 @@ This option is recommended to test integration of NaaVRE with Jupyter Hub or Key
 To test the integration of extra services, run:
 
 ```shell
-tilt enable [n-a-a-vre-dev hub proxy user-placeholder user-scheduler] minio traefik square-root-v3 square-root-v2
+tilt enable [n-a-a-vre-dev hub proxy user-placeholder user-scheduler] minio traefik square-root-v3 square-root-v2 kube-prometheus-stack-server kube-prometheus-stack-alertmanager
 ```
 
 ### Resetting the dev environment
