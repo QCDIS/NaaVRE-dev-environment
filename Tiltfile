@@ -32,7 +32,7 @@ groups = {
     'minio',
     'traefik',
     'square-root-v2',
-    'square-root-v3',
+    'square-root-v3'
     ],
   }
 default_groups = [
@@ -61,3 +61,4 @@ include('services/naavre/integration.Tiltfile')
 include('services/minio/Tiltfile')
 include('services/traefik/Tiltfile')
 include('services/canary-example/Tiltfile')
+include('services/kube-prometheus-stack/Tiltfile')

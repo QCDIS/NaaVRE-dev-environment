@@ -1,0 +1,24 @@
+load('ext://helm_remote', 'helm_remote')
+load('ext://namespace', 'namespace_create', 'namespace_inject')
+namespace_create('monitoring')
+
+helm_remote(
+  'kube-prometheus-stack',
+  repo_name='prometheus-community',
+  repo_url='https://prometheus-community.github.io/helm-charts',
+  version='60.4.0',
+  values=[
+    './helm/values.yaml',
+    ],
+   namespace='monitoring'
+  )
+
+
+k8s_resource('kube-prometheus-stack-grafana',
+  labels=['monitoring'],
+  links=['https://naavre-dev.minikube.test/grafana']
+)
+
+k8s_resource('kube-prometheus-stack-prometheus-node-exporter',
+  labels=['monitoring']
+)
