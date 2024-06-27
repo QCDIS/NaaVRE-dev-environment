@@ -1,0 +1,132 @@
+# ingressRoute:
+#   dashboard:
+#     enabled: true
+#     # -- Additional ingressRoute annotations (e.g. for kubernetes.io/ingress.class)
+#     annotations:
+#         kubernetes.io/ingress.class: default
+#     labels: {}
+#     # -- The router match rule used for the dashboard ingressRoute
+#     matchRule: PathPrefix(`/traefik-dashboard`) || PathPrefix(`/traefik-api`)
+#     # -- Specify the allowed entrypoints to use for the dashboard ingress route, (e.g. traefik, web, websecure).
+#     # By default, it's using traefik entrypoint, which is not exposed.
+#     # /!\ Do not expose your dashboard without any protection over the internet /!\
+#     entryPoints: ["traefik"]
+
+
+# # Create an IngressRoute for the dashboard
+# ingressRoute:
+#   dashboard:
+#     enabled: true
+#     # Custom match rule with host domain
+#     matchRule: traefik.minikube.test
+#     entryPoints: ["websecure"]
+#     # Add custom middlewares : authentication and redirection
+#     middlewares:
+#       - name: traefik-dashboard-auth
+
+# # Create the custom middlewares used by the IngressRoute dashboard (can also be created in another way).
+# # /!\ Yes, you need to replace "changeme" password with a better one. /!\
+# extraObjects:
+#   - apiVersion: v1
+#     kind: Secret
+#     metadata:
+#       name: traefik-dashboard-auth-secret
+#     type: kubernetes.io/basic-auth
+#     stringData:
+#       username: admin
+#       password: changeme
+
+#   - apiVersion: traefik.io/v1alpha1
+#     kind: Middleware
+#     metadata:
+#       name: traefik-dashboard-auth
+#     spec:
+#       basicAuth:
+#         secret: traefik-dashboard-auth-secret
+
+
+ingressRoute:
+  dashboard:
+    enabled: false
+additionalArguments:
+- "--api.insecure=true"
+
+extraObjects:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: traefik-api
+    spec:
+      type: ClusterIP
+      # type: NodePort
+      selector:
+        app.kubernetes.io/name: traefik
+        app.kubernetes.io/instance: traefik-traefik
+      ports:
+      - port: 8080
+        name: traefik
+        targetPort: 9000
+        protocol: TCP
+
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: traefik-dashboard-auth-secret
+    type: kubernetes.io/basic-auth
+    stringData:
+      username: admin
+      password: changeme
+
+  - apiVersion: traefik.io/v1alpha1
+    kind: Middleware
+    metadata:
+      name: traefik-dashboard-auth
+    spec:
+      basicAuth:
+        secret: traefik-dashboard-auth-secret
+
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: traefik-dashboard
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        traefik.ingress.kubernetes.io/router.middlewares: default-traefik-dashboard-auth@kubernetescrd
+    spec:
+      rules:
+      - host: traefik.minikube.test
+        http:
+          paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: traefik-api
+                port:
+                  name: traefik
+
+ingressClass:
+  enabled: true
+  isDefaultClass: false
+  name: traefik
+
+service:
+  enabled: true
+  single: true
+  # type: NodePort
+
+# ports:
+#   traefik:
+#     port: 9000
+#     expose:
+#       default: false
+#     exposedPort: 9000
+#     # -- The port protocol (TCP/UDP)
+#     protocol: TCP
+#   web:
+#     port: 8000
+#     expose:
+#       default: true
+#     exposedPort: 80
+#     protocol: TCP
+#     nodePort: 32080
