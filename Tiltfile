@@ -30,6 +30,9 @@ groups = {
     ],
   'extras': [
     'minio',
+    'traefik',
+    'square-root-v2',
+    'square-root-v3',
     ],
   }
 default_groups = [
@@ -56,3 +59,5 @@ include('services/naavre/image.Tiltfile')
 include('services/naavre/dev.Tiltfile')
 include('services/naavre/integration.Tiltfile')
 include('services/minio/Tiltfile')
+include('services/traefik/Tiltfile')
+include('services/canary-example/Tiltfile')
