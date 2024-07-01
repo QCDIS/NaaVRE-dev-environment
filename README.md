@@ -58,34 +58,10 @@ pre-commit install
 ggshield auth login
 ```
 
-### Helm dependencies
-
-During the initial setup, and after updating `submodules/VREPaaS-helm-charts`, run:
-
-```shell
-helm dependency build services/vrepaas/submodules/VREPaaS-helm-charts
-```
-
-### GitHub repository for building cells
-
-To containerize cells from this dev environment, you need to set up a personal GitHub repository. It will be used to commit the cells code and build and publish the container images:
-1. Create your repository from the [QCDIS/NaaVRE-cells](https://github.com/QCDIS/NaaVRE-cells) template, and follow instructions from its README file to generate an access token.
-2. Set the values of `CELL_GITHUB` and `CELL_GITHUB_TOKEN` in [./services/naavre/helm/values-integration.yaml](services/naavre/helm/values-integration.yaml) and [./services/naavre-dev/helm/values-dev.yaml](services/naavre/helm/values-dev.yaml).
-
-
 ### Minikube cluster
 
-The NaaVRE component are deployed by tilt to a minikube cluster.
-There are two options for running minikube: using a pre-configured [NaaVRE-dev-vm](https://github.com/QCDIS/NaaVRE-dev-vm), using a self-managed Minikube cluster.
-
-#### Using a pre-configured VM (NaaVRE-dev-vm)
-
-If you are provided with a development VM, follow these instructions: [Using the VM (for developers)](https://github.com/QCDIS/NaaVRE-dev-vm/blob/main/README.md#using-the-vm-for-developers).
-
-
-#### Using a self-managed Minikube cluster
-
-We use ingress-dns to access the resources deployed on the minikube cluster. To configure it, start minikube (`minikube start`), and follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Choose your operating system.
+The NaaVRE components are deployed by tilt to a local Kubernetes using
+minikube. We use ingress-dns to access those resources. To configure it, start minikube (`minikube start`), and follow step 3 section of the [minikube ingress-dns setup guide](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/). Choose your operating system.
 
 For Linux, pick the configuration matching your distribution's DNS setup. To find the DNS setup, run `head /etc/resolv.conf`:
 
@@ -102,6 +78,20 @@ EOF
 sudo systemctl restart systemd-resolved
 ```
 
+### Helm dependencies
+
+During the initial setup, and after updating `submodules/VREPaaS-helm-charts`, run:
+
+```shell
+helm dependency build services/vrepaas/submodules/VREPaaS-helm-charts
+```
+
+### GitHub repository for building cells
+
+To containerize cells from this dev environment, you need to set up a personal GitHub repository. It will be used to commit the cells code and build and publish the container images:
+1. Create your repository from the [QCDIS/NaaVRE-cells](https://github.com/QCDIS/NaaVRE-cells) template, and follow instructions from its README file to generate an access token.
+2. Set the values of `CELL_GITHUB` and `CELL_GITHUB_TOKEN` in [./services/naavre/helm/values-integration.yaml](services/naavre/helm/values-integration.yaml) and [./services/naavre-dev/helm/values-dev.yaml](services/naavre/helm/values-dev.yaml).
+
 
 ## Run the dev environment
 
@@ -109,13 +99,54 @@ sudo systemctl restart systemd-resolved
 
 ### Start minikube
 
-(Skip this step if you are using a [Using a pre-configured VM (NaaVRE-dev-vm)](#using-a-pre-configured-vm-naavre-dev-vm).)
-
 ```shell
 minikube start  --addons=ingress,ingress-dns
 # Optional:
 minikube dashboard --url
 ```
+
+#### Nginx Ingress Monitoring
+
+To enable metrics exporting from the ingress contorller modify the deployment and service called `ingress-nginx-controller`
+according to the following [guide](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/).
+
+To check the metrics are being exported get the nodePort mapped to '10254'. If for example the nodePort is '30361' you 
+can access the metrics from: http://naavre-dev.minikube.test:30361/metrics. The output should be similar to the following:
+```
+# HELP go_gc_duration_seconds A summary of the pause duration of garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 1.971e-05
+go_gc_duration_seconds{quantile="0.25"} 2.8325e-05
+go_gc_duration_seconds{quantile="0.5"} 5.6258e-05
+go_gc_duration_seconds{quantile="0.75"} 0.000102628
+go_gc_duration_seconds{quantile="1"} 0.000131488
+go_gc_duration_seconds_sum 0.001229649
+go_gc_duration_seconds_count 20
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 99
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.20.5"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated and still in use.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 6.398712e+06
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated, even if freed.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 8.6640184e+07
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.473744e+06
+# HELP go_memstats_frees_total Total number of frees.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 638149
+```
+
+You can check the 'ingress-nginx-endpoints' target in the Prometheus dashboard: 
+https://naavre-dev.minikube.test/prometheus/targets 
+
+Finally, import the [grafana dashboard](https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/grafana/dashboards/nginx.json) 
+to monitor the ingress controller.
 
 ### Start the services needed by NaaVRE
 
@@ -285,6 +316,17 @@ being distributed between the two versions.
 
 To change the percentage of requests going to each version change the values in the `services/canary-example/canary-example-canary.yaml` 
 file in the Ingress look for the `nginx.ingress.kubernetes.io/canary-weight` annotation and change the values to the desired
+
+
+### Grafana
+
+UI: https://naavre-dev.minikube.test/grafana/
+
+
+| Account       | Username | Password         | Token          |
+|---------------|----------|------------------|----------------|
+| Administrator | `admin`  | `prom-operator`  |                |
+
 
 
 ## Development cycle
@@ -473,7 +515,7 @@ velero restore create --from-backup default-ns-backup
 
 Find the container running Minikube:
 ```shell
-docker ps | grep k8s-provider-minikube
+docker ps | grep k8s-minikube
 ```
 Access the container running Minikube
 ```shell
