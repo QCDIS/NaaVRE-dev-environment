@@ -105,6 +105,45 @@ minikube start  --addons=ingress,ingress-dns
 minikube dashboard --url
 ```
 
+#### Nginx Ingress Monitoring
+
+To enable metrics exporting from the ingress contorller modify the deployment and service called `ingress-nginx-controller`
+according to the following [guide](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/).
+
+To check the metrics are being exported get the nodePort mapped to '10254'. If for example the nodePort is '30361' you 
+can access the metrics from: http://naavre-dev.minikube.test:30361/metrics. The output should be similar to the following:
+```
+# HELP go_gc_duration_seconds A summary of the pause duration of garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 1.971e-05
+go_gc_duration_seconds{quantile="0.25"} 2.8325e-05
+go_gc_duration_seconds{quantile="0.5"} 5.6258e-05
+go_gc_duration_seconds{quantile="0.75"} 0.000102628
+go_gc_duration_seconds{quantile="1"} 0.000131488
+go_gc_duration_seconds_sum 0.001229649
+go_gc_duration_seconds_count 20
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 99
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.20.5"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated and still in use.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 6.398712e+06
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated, even if freed.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 8.6640184e+07
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.473744e+06
+# HELP go_memstats_frees_total Total number of frees.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 638149
+```
+
+
+
 ### Start the services needed by NaaVRE
 
 ```shell
@@ -273,6 +312,17 @@ being distributed between the two versions.
 
 To change the percentage of requests going to each version change the values in the `services/canary-example/canary-example-canary.yaml` 
 file in the Ingress look for the `nginx.ingress.kubernetes.io/canary-weight` annotation and change the values to the desired
+
+
+### Grafana
+
+UI: https://naavre-dev.minikube.test/grafana/
+
+
+| Account       | Username | Password         | Token          |
+|---------------|----------|------------------|----------------|
+| Administrator | `admin`  | `prom-operator`  |                |
+
 
 
 ## Development cycle

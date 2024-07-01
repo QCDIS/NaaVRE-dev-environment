@@ -17,4 +17,17 @@ grafana:
     enabled: true
 
 
+prometheus:
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+        - naavre-dev.minikube.test
+    paths:
+        - /prometheus(/|$)(.*)
+
+
 
