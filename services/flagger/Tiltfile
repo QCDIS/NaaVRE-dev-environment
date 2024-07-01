@@ -1,0 +1,15 @@
+load('ext://helm_remote', 'helm_remote')
+load('ext://namespace', 'namespace_create', 'namespace_inject')
+namespace_create('ingress-nginx')
+
+helm_remote(
+  'flagger',
+  repo_name='flagger',
+  repo_url='https://flagger.app',
+  version='1.37.0',
+  values=[
+    './helm/values.yaml',
+    ],
+   namespace='ingress-nginx'
+  )
+

@@ -39,3 +39,8 @@ k8s_resource('kube-prometheus-stack-admission-create',
 k8s_resource('kube-prometheus-stack-admission-patch',
   labels=['monitoring']
 )
+
+
+k8s_resource('kube-prometheus-stack-admission-patch',
+  labels=['monitoring']
+)

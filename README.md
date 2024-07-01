@@ -142,7 +142,11 @@ go_memstats_buck_hash_sys_bytes 1.473744e+06
 go_memstats_frees_total 638149
 ```
 
+You can check the 'ingress-nginx-endpoints' target in the Prometheus dashboard: 
+https://naavre-dev.minikube.test/prometheus/targets 
 
+Finally, import the [grafana dashboard](https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/grafana/dashboards/nginx.json) 
+to monitor the ingress controller.
 
 ### Start the services needed by NaaVRE
 
