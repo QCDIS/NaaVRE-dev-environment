@@ -6,7 +6,7 @@ helm_remote(
   'kube-prometheus-stack',
   repo_name='prometheus-community',
   repo_url='https://prometheus-community.github.io/helm-charts',
-  version='60.4.0',
+  version='61.1.0',
   values=[
     './helm/values.yaml',
     ],
@@ -20,5 +20,22 @@ k8s_resource('kube-prometheus-stack-grafana',
 )
 
 k8s_resource('kube-prometheus-stack-prometheus-node-exporter',
+  labels=['monitoring']
+)
+
+
+k8s_resource('kube-prometheus-stack-kube-state-metrics',
+  labels=['monitoring']
+)
+
+k8s_resource('kube-prometheus-stack-operator',
+  labels=['monitoring']
+)
+
+k8s_resource('kube-prometheus-stack-admission-create',
+  labels=['monitoring']
+)
+
+k8s_resource('kube-prometheus-stack-admission-patch',
   labels=['monitoring']
 )
