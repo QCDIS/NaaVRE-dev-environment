@@ -100,7 +100,7 @@ To containerize cells from this dev environment, you need to set up a personal G
 ### Start minikube
 
 ```shell
-minikube start  --addons=ingress,ingress-dns
+minikube start  --addons=ingress,ingress-dns,metrics-server
 # Optional:
 minikube dashboard --url
 ```
@@ -150,7 +150,7 @@ to monitor the ingress controller.
 
 ### Start the services needed by NaaVRE
 
-```shell
+```shell[values-kube-prometheus-stack.yaml](..%2F..%2FDownloads%2Fvalues-kube-prometheus-stack.yaml)
 tilt up
 ```
 

@@ -5,7 +5,7 @@ serviceMonitor:
   enabled: true
   honorLabels: true
   # Set the namespace the ServiceMonitor should be deployed
-  namespace: monitoring
+  namespace: ingress-nginx
   # Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
   # labels:
 

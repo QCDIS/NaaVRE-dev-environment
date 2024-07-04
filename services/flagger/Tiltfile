@@ -13,3 +13,10 @@ helm_remote(
    namespace='ingress-nginx'
   )
 
+
+k8s_resource('flagger',
+  labels=['flagger'],
+  resource_deps=['flagger-crds-install',
+  'flagger-crds-ready'
+  ],
+)
