@@ -1,16 +1,4 @@
 namespace: test
-image:
-  tag: 6.6.3
 
 service:
-  enabled: false # Canary will create three services: podinfo-primary, podinfo-canary and podinfo
-ingress:
-  enabled: true
-  className: nginx
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-  hosts:
-    - host: naavre-dev.minikube.test
-      paths:
-        - path: /podinfo(/|$)(.*)
-          pathType: ImplementationSpecific
+    enabled: false

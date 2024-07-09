@@ -16,31 +16,10 @@ helm_remote(
 
 k8s_resource('kube-prometheus-stack-grafana',
   labels=['monitoring'],
-  links=['https://naavre-dev.minikube.test/grafana']
-)
-
-k8s_resource('kube-prometheus-stack-prometheus-node-exporter',
-  labels=['monitoring']
-)
-
-
-k8s_resource('kube-prometheus-stack-kube-state-metrics',
-  labels=['monitoring']
-)
-
-k8s_resource('kube-prometheus-stack-operator',
-  labels=['monitoring']
-)
-
-k8s_resource('kube-prometheus-stack-admission-create',
-  labels=['monitoring']
-)
-
-k8s_resource('kube-prometheus-stack-admission-patch',
-  labels=['monitoring']
-)
-
-
-k8s_resource('kube-prometheus-stack-admission-patch',
-  labels=['monitoring']
+  links=['https://naavre-dev.minikube.test/grafana', 'https://naavre-dev.minikube.test/prometheus'],
+  resource_deps=['kube-prometheus-stack-prometheus-node-exporter',
+  'kube-prometheus-stack-kube-state-metrics',
+  'kube-prometheus-stack-operator',
+  'kube-prometheus-stack-admission-create',
+  'kube-prometheus-stack-admission-patch'],
 )

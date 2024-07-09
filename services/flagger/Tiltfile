@@ -1,6 +1,6 @@
 load('ext://helm_remote', 'helm_remote')
 load('ext://namespace', 'namespace_create', 'namespace_inject')
-namespace_create('ingress-nginx')
+namespace_create('flagger-system')
 
 helm_remote(
   'flagger',
@@ -10,6 +10,31 @@ helm_remote(
   values=[
     './helm/values.yaml',
     ],
-   namespace='ingress-nginx'
+   namespace='flagger-system'
   )
 
+
+k8s_resource('flagger',
+  labels=['flagger'],
+  resource_deps=['flagger-crds-install',
+  'flagger-crds-ready'
+  ],
+)
+
+
+
+helm_remote(
+  'loadtester',
+  repo_name='flagger',
+  repo_url='https://flagger.app',
+  version='0.32.0',
+  values=[
+    './helm/values.yaml',
+    ],
+   namespace='flagger-system'
+  )
+
+
+k8s_resource('loadtester',
+labels=['flagger'],
+)

@@ -16,7 +16,30 @@ helm_remote(
 
 k8s_resource('podinfo',
   labels=['podinfo'],
-  links=['https://naavre-dev.minikube.test/podinfo/','http://naavre-dev.minikube.test/podinfo/metrics'],
+)
+
+
+k8s_yaml(
+['k8s/service-monitor.yaml',
+'k8s/metric-template-error-rate.yaml',
+'k8s/metric-template-error-latency.yaml',
+'k8s/podinfo-canary.yaml'],
+)
+
+k8s_resource('podinfo-canary',
+  labels=['podinfo'],
+)
+
+k8s_resource('podinfo-primary',
+  labels=['podinfo'],
+)
+
+k8s_resource('error-rate',
+  labels=['podinfo'],
+)
+
+k8s_resource('latency',
+  labels=['podinfo'],
 )
 
 
