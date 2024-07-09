@@ -100,15 +100,21 @@ To containerize cells from this dev environment, you need to set up a personal G
 ### Start minikube
 
 ```shell
-minikube start  --addons=ingress,ingress-dns,metrics-server
+minikube start  --addons=ingress,ingress-dns
 # Optional:
 minikube dashboard --url
 ```
 
 #### Nginx Ingress Monitoring
 
-To enable metrics exporting from the ingress contorller modify the deployment and service called `ingress-nginx-controller`
-according to the following [guide](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/).
+To enable metrics exporting from the ingress contorller modify the deployment and service called `ingress-nginx-controller` 
+by patching the deployment and service with the following commands:
+```shell
+kubectl patch deployment  ingress-nginx-controller -n ingress-nginx --patch-file services/kube-prometheus-stack/patches/ingress-nginx-controller-deployment-patch.yaml
+kubectl patch service ingress-nginx-controller  -n ingress-nginx --patch-file services/kube-prometheus-stack/patches/ingress-nginx-controller-service-patch.yaml
+```
+These patches are based on the following [guide](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/).
+
 
 To check the metrics are being exported get the nodePort mapped to '10254'. If for example the nodePort is '30361' you 
 can access the metrics from: http://naavre-dev.minikube.test:30361/metrics. The output should be similar to the following:
@@ -150,7 +156,7 @@ to monitor the ingress controller.
 
 ### Start the services needed by NaaVRE
 
-```shell[values-kube-prometheus-stack.yaml](..%2F..%2FDownloads%2Fvalues-kube-prometheus-stack.yaml)
+```shell
 tilt up
 ```
 
@@ -318,10 +324,16 @@ To change the percentage of requests going to each version change the values in 
 file in the Ingress look for the `nginx.ingress.kubernetes.io/canary-weight` annotation and change the values to the desired
 
 
-### Grafana
+### Grafana & Prometheus
+
+Enable the metrics server:
+```shell
+minikube addons enable metrics-server
+```
 
 UI: https://naavre-dev.minikube.test/grafana/
 
+UI: https://naavre-dev.minikube.test/prometheus/
 
 | Account       | Username | Password         | Token          |
 |---------------|----------|------------------|----------------|

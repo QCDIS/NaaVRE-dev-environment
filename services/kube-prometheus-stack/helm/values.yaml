@@ -23,12 +23,16 @@ prometheus:
     enabled: true
     ingressClassName: nginx
     annotations:
+        kubernetes.io/ingress.class: nginx
         nginx.ingress.kubernetes.io/rewrite-target: /$2
     hosts:
         - naavre-dev.minikube.test
     paths:
         - /prometheus(/|$)(.*)
   prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    externalUrl: "https://naavre-dev.minikube.test/prometheus"
+#     routePrefix: /prometheus
     additionalScrapeConfigs:
         - job_name: 'ingress-nginx-endpoints'
           kubernetes_sd_configs:
@@ -56,5 +60,8 @@ prometheus:
           - source_labels: [__meta_kubernetes_service_name]
             regex: prometheus-server
             action: drop
+
+
+
 
 
