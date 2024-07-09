@@ -5,16 +5,16 @@ metadata:
   namespace: test
 spec:
   provider:
+    address: http://prometheus-prometheus.monitoring:9090
     type: prometheus
-    address: http://prometheus-operated.monitoring:9090
   query: |
     histogram_quantile(0.99,
       sum(
         rate(
           http_request_duration_seconds_bucket{
-            kubernetes_namespace="{{ namespace }}",
-            kubernetes_pod_name=~"{{ target }}-[0-9a-zA-Z]+(-[0-9a-zA-Z]+)"
-          }[1m]
+            namespace="{{ namespace }}",
+            job="{{ target }}-canary"
+          }[{{ interval }}]
         )
       ) by (le)
     )
