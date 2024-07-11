@@ -148,12 +148,6 @@ go_memstats_buck_hash_sys_bytes 1.473744e+06
 go_memstats_frees_total 638149
 ```
 
-You can check the 'ingress-nginx-endpoints' target in the Prometheus dashboard: 
-https://naavre-dev.minikube.test/prometheus/targets 
-
-Finally, import the [grafana dashboard](https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/grafana/dashboards/nginx.json) 
-to monitor the ingress controller.
-
 ### Start the services needed by NaaVRE
 
 ```shell
@@ -340,6 +334,42 @@ UI: https://naavre-dev.minikube.test/prometheus/
 | Administrator | `admin`  | `prom-operator`  |                |
 
 
+If you have enabled the [nginx ingress monitoring](#nginx-ingress-monitoring) you can check the 'ingress-nginx-endpoints' 
+target in the Prometheus dashboard: https://naavre-dev.minikube.test/prometheus/targets 
+
+Also, you can import the [grafana dashboard](https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/grafana/dashboards/nginx.json) 
+to monitor the ingress controller.
+
+
+### Flagger 
+
+You can enable canary deployments with flagger by following the instructions [here](https://docs.flagger.app/tutorials/prometheus-operator).
+
+
+Install the podinfo application:
+```shell
+helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test
+```
+
+Create the ServiceMonitor, MetricTemplate and the Canary resources by running:
+```shell
+kubectl apply -f services/podinfo/k8s/
+ ```
+
+If the canary deployment is deployed correctly you should see in the test namespace three services:
+* podinfo
+* podinfo-primary
+* podinfo-canary
+
+The podinfo service is the main service that will be used to access the podinfo application.
+The podinfo and podinfo-primary services are using the podinfo-primary pod. The podinfo-canary service is not using any pod.
+
+Flagger will determine if the canary deployment is healthy and if it is it will promote it to the primary deployment.
+To test it change the image's tag:
+
+```shell
+helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
+````
 
 ## Development cycle
 

@@ -1,4 +1,4 @@
-metricsServer: "http://prometheus-operated.monitoring:9090"
+metricsServer: "http://kube-prometheus-stack-prometheus:9090"
 
 # creates serviceMonitor for monitoring Flagger metrics
 serviceMonitor:

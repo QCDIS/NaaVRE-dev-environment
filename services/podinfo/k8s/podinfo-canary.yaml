@@ -11,12 +11,12 @@ spec:
     name: podinfo
   progressDeadlineSeconds: 60
   service:
-    port: 80
+    port: 9898
     targetPort: http
     name: podinfo
   analysis:
-    interval: 30s
-    iterations: 10
+    interval: 10s
+    iterations: 2
     threshold: 2
     metrics:
     - name: error-rate
@@ -24,7 +24,7 @@ spec:
         name: error-rate
       thresholdRange:
         max: 1
-      interval: 30s
+      interval: 10s
     - name: latency
       templateRef:
         name: latency
@@ -38,4 +38,4 @@ spec:
         timeout: 5s
         metadata:
           type: cmd
-          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.test/"
+          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.test:9898"
