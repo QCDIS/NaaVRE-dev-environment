@@ -1,11 +1,11 @@
-metricsServer: "http://prometheus-operated:9090"
+metricsServer: "http://kube-prometheus-stack-prometheus.monitoring:9090"
 
 # creates serviceMonitor for monitoring Flagger metrics
 serviceMonitor:
   enabled: true
   honorLabels: true
   # Set the namespace the ServiceMonitor should be deployed
-  namespace: monitoring
+  namespace: ingress-nginx
   # Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
   # labels:
 

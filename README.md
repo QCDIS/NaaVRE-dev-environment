@@ -148,12 +148,6 @@ go_memstats_buck_hash_sys_bytes 1.473744e+06
 go_memstats_frees_total 638149
 ```
 
-You can check the 'ingress-nginx-endpoints' target in the Prometheus dashboard: 
-https://naavre-dev.minikube.test/prometheus/targets 
-
-Finally, import the [grafana dashboard](https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/grafana/dashboards/nginx.json) 
-to monitor the ingress controller.
-
 ### Start the services needed by NaaVRE
 
 ```shell
@@ -340,6 +334,81 @@ UI: https://naavre-dev.minikube.test/prometheus/
 | Administrator | `admin`  | `prom-operator`  |                |
 
 
+If you have enabled the [nginx ingress monitoring](#nginx-ingress-monitoring) you can check the 'ingress-nginx-endpoints' 
+target in the Prometheus dashboard: https://naavre-dev.minikube.test/prometheus/targets 
+
+Also, you can import the [grafana dashboard](https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/grafana/dashboards/nginx.json) 
+to monitor the ingress controller.
+
+
+### Flagger 
+
+You can enable canary deployments with flagger by following the instructions [here](https://docs.flagger.app/tutorials/prometheus-operator).
+
+
+Install the podinfo application:
+```shell
+helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test
+```
+
+Create the ServiceMonitor, MetricTemplate and the Canary resources by running:
+```shell
+kubectl apply -f services/podinfo/k8s/
+ ```
+
+Check the podinfo tag version at https://naavre-dev.minikube.test/podinfo/ (should be 6.6.3 )and the metrics at 
+http://naavre-dev.minikube.test/podinfo/metrics 
+
+If the canary deployment is deployed correctly you should see in the test namespace three services:
+* podinfo
+* podinfo-primary
+* podinfo-canary
+
+The podinfo service is the main service that will be used to access the podinfo application.
+The podinfo and podinfo-primary services are using the podinfo-primary pod. The podinfo-canary service is not using any pod.
+
+Flagger will determine if the canary deployment is healthy and if it is it will promote it to the primary deployment.
+To test it change the image's tag:
+
+```shell
+helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
+```
+
+To watch the carnage in the Canary resources run:
+```shell
+watch kubectl get canaries --all-namespaces
+```
+
+To run everything on one command: 
+```shell 
+helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/k8s/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/k8s/; sleep 35s ;  helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
+```
+
+To check the events of the podinfo canary:
+```shell
+kubectl describe canary podinfo -n test
+```
+
+If the canary deployment is successful you should see events si,iar to this:
+```shell
+Events:
+  Type     Reason  Age                    From     Message
+  ----     ------  ----                   ----     -------
+  Warning  Synced  7m28s                  flagger  podinfo-primary.test not ready: waiting for rollout to finish: observed deployment generation less than desired generation
+  Normal   Synced  6m58s (x2 over 7m28s)  flagger  all the metrics providers are available!
+  Normal   Synced  6m58s                  flagger  Initialization done! podinfo.test
+  Normal   Synced  6m28s                  flagger  New revision detected! Scaling up podinfo.test
+  Normal   Synced  5m58s                  flagger  Starting canary analysis for podinfo.test
+  Normal   Synced  5m58s                  flagger  Advance podinfo.test canary iteration 1/10
+  Normal   Synced  5m28s                  flagger  Advance podinfo.test canary iteration 2/10
+  Normal   Synced  4m58s                  flagger  Advance podinfo.test canary iteration 3/10
+  Normal   Synced  4m28s                  flagger  Advance podinfo.test canary iteration 4/10
+  Normal   Synced  3m58s                  flagger  Advance podinfo.test canary iteration 5/10
+  Normal   Synced  28s (x6 over 3m28s)    flagger  (combined from similar events): Copying podinfo.test template spec to podinfo-primary.test
+```
+
+Finally, you can check the version of the podinfo application at https://naavre-dev.minikube.test/podinfo/ (it should be 
+6.7.0) 
 
 ## Development cycle
 
