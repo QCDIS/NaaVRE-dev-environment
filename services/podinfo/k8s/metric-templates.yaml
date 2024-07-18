@@ -5,22 +5,22 @@ metadata:
   namespace: test
 spec:
   provider:
-    address: http://kube-prometheus-stack-prometheus:9090
+    address: http://kube-prometheus-stack-prometheus.monitoring:9090
     type: prometheus
   query: |
     100 - rate(
       http_requests_total{
         namespace="{{ namespace }}",
-        job="{{ target }}-canary",
+        job="{{ target }}",
         status!~"5.*"
       }[{{ interval }}])
     /
-    rate(
+    (rate(
       http_requests_total{
         namespace="{{ namespace }}",
-        job="{{ target }}-canary"
+        job="{{ target }}"
       }[{{ interval }}]
-    ) * 100
+    ) * 100)
 
 ---
 apiVersion: flagger.app/v1beta1
@@ -30,7 +30,7 @@ metadata:
   namespace: test
 spec:
   provider:
-    address: http://kube-prometheus-stack-prometheus:9090
+    address: http://kube-prometheus-stack-prometheus.monitoring:9090
     type: prometheus
   query: |
     histogram_quantile(0.99,

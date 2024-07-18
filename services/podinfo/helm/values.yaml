@@ -3,7 +3,7 @@ image:
   tag: 6.6.3
 
 service:
-    enabled: false
+  enabled: false # Canary will create three services: podinfo-primary, podinfo-canary and podinfo
 ingress:
   enabled: true
   className: nginx
@@ -14,3 +14,7 @@ ingress:
       paths:
         - path: /podinfo(/|$)(.*)
           pathType: ImplementationSpecific
+
+serviceMonitor:
+  enabled: false
+  interval: 5s

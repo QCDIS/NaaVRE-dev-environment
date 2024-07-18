@@ -31,6 +31,9 @@ prometheus:
         - /prometheus(/|$)(.*)
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
+#     serviceMonitorSelector: # if we add this, it will only scrape the service monitors with the label release: kube-prometheus-stack. If left empty, it will scrape all service monitors
+#         matchLabels:
+#             release: kube-prometheus-stack
     externalUrl: "https://naavre-dev.minikube.test/prometheus"
 #     routePrefix: /prometheus
     additionalScrapeConfigs:
