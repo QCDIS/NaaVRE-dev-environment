@@ -21,8 +21,6 @@ k8s_resource('flagger',
   ],
 )
 
-
-
 helm_remote(
   'loadtester',
   repo_name='flagger',

@@ -14,7 +14,3 @@ ingress:
       paths:
         - path: /podinfo(/|$)(.*)
           pathType: ImplementationSpecific
-
-serviceMonitor:
-  enabled: false
-  interval: 5s
