@@ -343,8 +343,15 @@ to monitor the ingress controller.
 
 ### Flagger 
 
-You can enable canary deployments with flagger by following the instructions [here](https://docs.flagger.app/tutorials/prometheus-operator).
 
+#### Kubernetes meshProvider
+
+You can enable canary deployments with flagger. The instructions are take from by following the instructions [here](https://docs.flagger.app/tutorials/prometheus-operator).
+
+Open the values.yaml file in the services/flagger/helm folder and make sure that the meshProvider is set to kubernetes:
+```yaml
+meshProvider: kubernetes
+```
 
 Install the podinfo application:
 ```shell
@@ -353,7 +360,7 @@ helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --c
 
 Create the ServiceMonitor, MetricTemplate and the Canary resources by running:
 ```shell
-kubectl apply -f services/podinfo/k8s/
+kubectl apply -f services/podinfo/k8s-provider/
  ```
 
 Check the podinfo tag version at https://naavre-dev.minikube.test/podinfo/ (should be 6.6.3 )and the metrics at 
@@ -381,7 +388,7 @@ watch kubectl get canaries --all-namespaces
 
 To run everything on one command: 
 ```shell 
-helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/k8s/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/k8s/; sleep 35s ;  helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
+helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/k8s-provider/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/k8s-provider/; sleep 35s ;  helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
 ```
 
 To check the events of the podinfo canary:
@@ -409,6 +416,21 @@ Events:
 
 Finally, you can check the version of the podinfo application at https://naavre-dev.minikube.test/podinfo/ (it should be 
 6.7.0) 
+
+
+#### Nginx meshProvider
+
+Before installing Flagger make sure you have enabled Nginx monitoring according to [nginx ingress monitoring](#nginx-ingress-monitoring).
+
+Open the values.yaml file in the services/flagger/helm folder and make sure that the meshProvider is set to nginx:
+```yaml
+meshProvider: nginx
+```
+
+```shell
+helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/nginx-provider/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/nginx-provider/;
+```
+
 
 ## Development cycle
 
@@ -596,7 +618,7 @@ velero restore create --from-backup default-ns-backup
 
 Find the container running Minikube:
 ```shell
-docker ps | grep k8s-minikube
+docker ps | grep k8s-provider-minikube
 ```
 Access the container running Minikube
 ```shell

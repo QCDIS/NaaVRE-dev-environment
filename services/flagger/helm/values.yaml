@@ -10,4 +10,4 @@ serviceMonitor:
   # labels:
 
 # accepted values are kubernetes, istio, linkerd, appmesh, contour, nginx, gloo, skipper, traefik, apisix, osm
-meshProvider: "kubernetes"
+meshProvider: "nginx"
