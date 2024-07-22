@@ -31,6 +31,13 @@ spec:
     stepWeight: 5
     # NGINX Prometheus checks
     metrics:
+    - name: error-rate
+      templateRef:
+        name: error-rate
+        namespace: ingress-nginx
+      thresholdRange:
+        min: 99
+      interval: 1m
     - name: request-success-rate
       # minimum req success rate (non 5xx responses)
       # percentage (0-100)
@@ -39,15 +46,15 @@ spec:
       interval: 1m
     # testing (optional)
     webhooks:
-#       - name: acceptance-test
-#         type: pre-rollout
-#         url: http://loadtester.flagger-system/
-#         timeout: 30s
-#         metadata:
-#           type: bash
-#           cmd: "curl -sd 'test' http://podinfo-canary.test:9898/token | grep token"
+      - name: acceptance-test
+        type: pre-rollout
+        url: http://loadtester.flagger-system/
+        timeout: 30s
+        metadata:
+          type: bash
+          cmd: "curl -k  https://naavre-dev.minikube.test/podinfo/env | grep HOSTNAME"
       - name: load-test
         url: http://loadtester.flagger-system/
-        timeout: 5s
+        timeout: 10s
         metadata:
-          cmd: "hey -z 1m -q 10 -c 2 http://podinfo-canary.test:9898"
+          cmd: "hey -z 1m -q 10 -c 2 https://naavre-dev.minikube.test/podinfo/"

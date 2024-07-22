@@ -427,10 +427,29 @@ Open the values.yaml file in the services/flagger/helm folder and make sure that
 meshProvider: nginx
 ```
 
+Run evrything on one command: 
 ```shell
-helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/nginx-provider/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/nginx-provider/;
+helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/nginx-provider/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/nginx-provider/; sleep 35; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
 ```
 
+if successful you should see the following events:
+```shell
+Events:
+  Type     Reason  Age                   From     Message
+  ----     ------  ----                  ----     -------
+  Warning  Synced  3m15s                 flagger  podinfo-primary.test not ready: waiting for rollout to finish: observed deployment generation less than desired generation
+  Normal   Synced  3m5s (x2 over 3m15s)  flagger  all the metrics providers are available!
+  Normal   Synced  3m5s                  flagger  Initialization done! podinfo.test
+  Normal   Synced  2m35s                 flagger  New revision detected! Scaling up podinfo.test
+  Normal   Synced  2m25s                 flagger  Starting canary analysis for podinfo.test
+  Normal   Synced  2m25s                 flagger  Pre-rollout check acceptance-test passed
+  Normal   Synced  2m25s                 flagger  Advance podinfo.test canary weight 5
+  Warning  Synced  105s (x4 over 2m15s)  flagger  Halt advancement no values found for nginx metric request-success-rate probably podinfo.test is not receiving traffic: running query failed: no values found
+  Normal   Synced  95s                   flagger  Advance podinfo.test canary weight 10
+  Normal   Synced  85s                   flagger  Advance podinfo.test canary weight 15
+  Normal   Synced  75s                   flagger  Advance podinfo.test canary weight 20
+  Normal   Synced  5s (x7 over 65s)      flagger  (combined from similar events): Copying podinfo.test template spec to podinfo-primary.test
+```
 
 ## Development cycle
 
