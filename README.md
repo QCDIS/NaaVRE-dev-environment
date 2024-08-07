@@ -109,7 +109,7 @@ sudo systemctl restart systemd-resolved
 
 ### Start minikube
 
-(Skip this step if you are using a [self-managed Minikube cluster](#using-a-self-managed-minikube-cluster).)
+(Skip this step if you are using a [Using a pre-configured VM (NaaVRE-dev-vm)](#using-a-pre-configured-vm-naavre-dev-vm).)
 
 ```shell
 minikube start  --addons=ingress,ingress-dns
