@@ -16,7 +16,6 @@ grafana:
   persistence:
     enabled: true
 
-
 prometheus:
   enabled: true
   ingress:
@@ -31,6 +30,7 @@ prometheus:
         - /prometheus(/|$)(.*)
   prometheusSpec:
     serviceMonitorSelectorNilUsesHelmValues: false
+    retention: 2y
 #     serviceMonitorSelector: # if we add this, it will only scrape the service monitors with the label release: kube-prometheus-stack. If left empty, it will scrape all service monitors
 #         matchLabels:
 #             release: kube-prometheus-stack
