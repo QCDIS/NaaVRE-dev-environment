@@ -1,0 +1,12 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+    spec:
+      containers:
+        - name: controller
+          ports:
+            - name: prometheus
+              containerPort: 10254

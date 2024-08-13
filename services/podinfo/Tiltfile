@@ -1,0 +1,22 @@
+load('ext://helm_remote', 'helm_remote')
+load('ext://namespace', 'namespace_create', 'namespace_inject')
+namespace_create('test')
+
+helm_remote(
+  'podinfo',
+  repo_name='podinfo',
+  repo_url='https://stefanprodan.github.io/podinfo',
+  version='6.7.0',
+  values=[
+    './helm/values.yaml',
+    ],
+   namespace='test'
+  )
+
+
+k8s_resource('podinfo',
+  labels=['podinfo'],
+  links=['https://naavre-dev.minikube.test/podinfo/','http://naavre-dev.minikube.test/podinfo/metrics'],
+)
+
+

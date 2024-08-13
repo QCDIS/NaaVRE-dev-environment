@@ -1,0 +1,13 @@
+metricsServer: "http://kube-prometheus-stack-prometheus.monitoring:9090"
+
+# creates serviceMonitor for monitoring Flagger metrics
+serviceMonitor:
+  enabled: true
+  honorLabels: true
+  # Set the namespace the ServiceMonitor should be deployed
+  namespace: ingress-nginx
+  # Set labels for the ServiceMonitor, use this to define your scrape label for Prometheus Operator
+  # labels:
+
+# accepted values are kubernetes, istio, linkerd, appmesh, contour, nginx, gloo, skipper, traefik, apisix, osm
+meshProvider: "nginx"
