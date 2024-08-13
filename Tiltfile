@@ -33,6 +33,13 @@ groups = {
     'traefik',
     'square-root-v2',
     'square-root-v3',
+    'kube-prometheus-stack-grafana',
+    'kube-prometheus-stack-prometheus-node-exporter',
+    'kube-prometheus-stack-kube-state-metrics',
+    'kube-prometheus-stack-operator',
+    'kube-prometheus-stack-admission-create',
+    'kube-prometheus-stack-admission-patch',
+    'flagger',
     ],
   }
 default_groups = [
@@ -61,3 +68,6 @@ include('services/naavre/integration.Tiltfile')
 include('services/minio/Tiltfile')
 include('services/traefik/Tiltfile')
 include('services/canary-example/Tiltfile')
+include('services/kube-prometheus-stack/Tiltfile')
+include('services/flagger/Tiltfile')
+include('services/podinfo/Tiltfile')

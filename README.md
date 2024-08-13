@@ -117,6 +117,49 @@ minikube start  --addons=ingress,ingress-dns
 minikube dashboard --url
 ```
 
+#### Nginx Ingress Monitoring
+
+To enable metrics exporting from the ingress contorller modify the deployment and service called `ingress-nginx-controller` 
+by patching the deployment and service with the following commands:
+```shell
+kubectl patch deployment  ingress-nginx-controller -n ingress-nginx --patch-file services/kube-prometheus-stack/patches/ingress-nginx-controller-deployment-patch.yaml
+kubectl patch service ingress-nginx-controller  -n ingress-nginx --patch-file services/kube-prometheus-stack/patches/ingress-nginx-controller-service-patch.yaml
+```
+These patches are based on the following [guide](https://kubernetes.github.io/ingress-nginx/user-guide/monitoring/).
+
+
+To check the metrics are being exported get the nodePort mapped to '10254'. If for example the nodePort is '30361' you 
+can access the metrics from: http://naavre-dev.minikube.test:30361/metrics. The output should be similar to the following:
+```
+# HELP go_gc_duration_seconds A summary of the pause duration of garbage collection cycles.
+# TYPE go_gc_duration_seconds summary
+go_gc_duration_seconds{quantile="0"} 1.971e-05
+go_gc_duration_seconds{quantile="0.25"} 2.8325e-05
+go_gc_duration_seconds{quantile="0.5"} 5.6258e-05
+go_gc_duration_seconds{quantile="0.75"} 0.000102628
+go_gc_duration_seconds{quantile="1"} 0.000131488
+go_gc_duration_seconds_sum 0.001229649
+go_gc_duration_seconds_count 20
+# HELP go_goroutines Number of goroutines that currently exist.
+# TYPE go_goroutines gauge
+go_goroutines 99
+# HELP go_info Information about the Go environment.
+# TYPE go_info gauge
+go_info{version="go1.20.5"} 1
+# HELP go_memstats_alloc_bytes Number of bytes allocated and still in use.
+# TYPE go_memstats_alloc_bytes gauge
+go_memstats_alloc_bytes 6.398712e+06
+# HELP go_memstats_alloc_bytes_total Total number of bytes allocated, even if freed.
+# TYPE go_memstats_alloc_bytes_total counter
+go_memstats_alloc_bytes_total 8.6640184e+07
+# HELP go_memstats_buck_hash_sys_bytes Number of bytes used by the profiling bucket hash table.
+# TYPE go_memstats_buck_hash_sys_bytes gauge
+go_memstats_buck_hash_sys_bytes 1.473744e+06
+# HELP go_memstats_frees_total Total number of frees.
+# TYPE go_memstats_frees_total counter
+go_memstats_frees_total 638149
+```
+
 ### Start the services needed by NaaVRE
 
 ```shell
@@ -192,7 +235,7 @@ This option is recommended to test integration of NaaVRE with Jupyter Hub or Key
 To test the integration of extra services, run:
 
 ```shell
-tilt enable [n-a-a-vre-dev hub proxy user-placeholder user-scheduler] minio traefik square-root-v3 square-root-v2
+tilt enable [n-a-a-vre-dev hub proxy user-placeholder user-scheduler] minio traefik square-root-v3 square-root-v2 kube-prometheus-stack-server kube-prometheus-stack-alertmanager
 ```
 
 ### Resetting the dev environment
@@ -286,6 +329,139 @@ being distributed between the two versions.
 To change the percentage of requests going to each version change the values in the `services/canary-example/canary-example-canary.yaml` 
 file in the Ingress look for the `nginx.ingress.kubernetes.io/canary-weight` annotation and change the values to the desired
 
+
+### Grafana & Prometheus
+
+Enable the metrics server:
+```shell
+minikube addons enable metrics-server
+```
+
+UI: https://naavre-dev.minikube.test/grafana/
+
+UI: https://naavre-dev.minikube.test/prometheus/
+
+| Account       | Username | Password         | Token          |
+|---------------|----------|------------------|----------------|
+| Administrator | `admin`  | `prom-operator`  |                |
+
+
+If you have enabled the [nginx ingress monitoring](#nginx-ingress-monitoring) you can check the 'ingress-nginx-endpoints' 
+target in the Prometheus dashboard: https://naavre-dev.minikube.test/prometheus/targets 
+
+Also, you can import the [grafana dashboard](https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/grafana/dashboards/nginx.json) 
+to monitor the ingress controller.
+
+
+### Flagger 
+
+
+#### Kubernetes meshProvider
+
+You can enable canary deployments with flagger. The instructions are take from by following the instructions [here](https://docs.flagger.app/tutorials/prometheus-operator).
+
+Open the values.yaml file in the services/flagger/helm folder and make sure that the meshProvider is set to kubernetes:
+```yaml
+meshProvider: kubernetes
+```
+
+Install the podinfo application:
+```shell
+helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test
+```
+
+Create the ServiceMonitor, MetricTemplate and the Canary resources by running:
+```shell
+kubectl apply -f services/podinfo/k8s-provider/
+ ```
+
+Check the podinfo tag version at https://naavre-dev.minikube.test/podinfo/ (should be 6.6.3 )and the metrics at 
+http://naavre-dev.minikube.test/podinfo/metrics 
+
+If the canary deployment is deployed correctly you should see in the test namespace three services:
+* podinfo
+* podinfo-primary
+* podinfo-canary
+
+The podinfo service is the main service that will be used to access the podinfo application.
+The podinfo and podinfo-primary services are using the podinfo-primary pod. The podinfo-canary service is not using any pod.
+
+Flagger will determine if the canary deployment is healthy and if it is it will promote it to the primary deployment.
+To test it change the image's tag:
+
+```shell
+helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
+```
+
+To watch the carnage in the Canary resources run:
+```shell
+watch kubectl get canaries --all-namespaces
+```
+
+To run everything on one command: 
+```shell 
+helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/k8s-provider/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/k8s-provider/; sleep 35s ;  helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
+```
+
+To check the events of the podinfo canary:
+```shell
+kubectl describe canary podinfo -n test
+```
+
+If the canary deployment is successful you should see events si,iar to this:
+```shell
+Events:
+  Type     Reason  Age                    From     Message
+  ----     ------  ----                   ----     -------
+  Warning  Synced  7m28s                  flagger  podinfo-primary.test not ready: waiting for rollout to finish: observed deployment generation less than desired generation
+  Normal   Synced  6m58s (x2 over 7m28s)  flagger  all the metrics providers are available!
+  Normal   Synced  6m58s                  flagger  Initialization done! podinfo.test
+  Normal   Synced  6m28s                  flagger  New revision detected! Scaling up podinfo.test
+  Normal   Synced  5m58s                  flagger  Starting canary analysis for podinfo.test
+  Normal   Synced  5m58s                  flagger  Advance podinfo.test canary iteration 1/10
+  Normal   Synced  5m28s                  flagger  Advance podinfo.test canary iteration 2/10
+  Normal   Synced  4m58s                  flagger  Advance podinfo.test canary iteration 3/10
+  Normal   Synced  4m28s                  flagger  Advance podinfo.test canary iteration 4/10
+  Normal   Synced  3m58s                  flagger  Advance podinfo.test canary iteration 5/10
+  Normal   Synced  28s (x6 over 3m28s)    flagger  (combined from similar events): Copying podinfo.test template spec to podinfo-primary.test
+```
+
+Finally, you can check the version of the podinfo application at https://naavre-dev.minikube.test/podinfo/ (it should be 
+6.7.0) 
+
+
+#### Nginx meshProvider
+
+Before installing Flagger make sure you have enabled Nginx monitoring according to [nginx ingress monitoring](#nginx-ingress-monitoring).
+
+Open the values.yaml file in the services/flagger/helm folder and make sure that the meshProvider is set to nginx:
+```yaml
+meshProvider: nginx
+```
+
+Run evrything on one command: 
+```shell
+helm uninstall podinfo -n test ; kubectl delete -f services/podinfo/nginx-provider/ ; sleep 20 ; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values.yaml --create-namespace -n test && kubectl apply -f services/podinfo/nginx-provider/; sleep 35; helm upgrade -i podinfo podinfo/podinfo -f services/podinfo/helm/values-update.yaml --create-namespace -n test
+```
+
+if successful you should see the following events:
+```shell
+Events:
+  Type     Reason  Age                   From     Message
+  ----     ------  ----                  ----     -------
+  Warning  Synced  3m15s                 flagger  podinfo-primary.test not ready: waiting for rollout to finish: observed deployment generation less than desired generation
+  Normal   Synced  3m5s (x2 over 3m15s)  flagger  all the metrics providers are available!
+  Normal   Synced  3m5s                  flagger  Initialization done! podinfo.test
+  Normal   Synced  2m35s                 flagger  New revision detected! Scaling up podinfo.test
+  Normal   Synced  2m25s                 flagger  Starting canary analysis for podinfo.test
+  Normal   Synced  2m25s                 flagger  Pre-rollout check acceptance-test passed
+  Normal   Synced  2m25s                 flagger  Advance podinfo.test canary weight 5
+  Warning  Synced  105s (x4 over 2m15s)  flagger  Halt advancement no values found for nginx metric request-success-rate probably podinfo.test is not receiving traffic: running query failed: no values found
+  Normal   Synced  95s                   flagger  Advance podinfo.test canary weight 10
+  Normal   Synced  85s                   flagger  Advance podinfo.test canary weight 15
+  Normal   Synced  75s                   flagger  Advance podinfo.test canary weight 20
+  Normal   Synced  5s (x7 over 65s)      flagger  (combined from similar events): Copying podinfo.test template spec to podinfo-primary.test
+```
 
 ## Development cycle
 
@@ -473,7 +649,7 @@ velero restore create --from-backup default-ns-backup
 
 Find the container running Minikube:
 ```shell
-docker ps | grep k8s-minikube
+docker ps | grep k8s-provider-minikube
 ```
 Access the container running Minikube
 ```shell
