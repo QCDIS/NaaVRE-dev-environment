@@ -1,0 +1,15 @@
+load('ext://helm_remote', 'helm_remote')
+
+helm_remote(
+    'NaaVRE-visualization-api',
+    repo_name='oci://ghcr.io/qcdis/charts',
+    values=['./helm/values.yaml'],
+)
+
+k8s_resource(
+  'NaaVRE-visualization-api',
+  labels=['NaaVRE-visualization-api'],
+  links=[
+    'https://naavre-dev.minikube.test/NaaVRE-visualization-api/',
+    ],
+  )
