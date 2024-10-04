@@ -7,3 +7,6 @@
 [submodule "submodules/NaaVRE"]
 	path = services/naavre/submodules/NaaVRE
 	url = git@github.com:QCDIS/NaaVRE.git
+[submodule "submodules/NaaVRE-visualization-api"]
+	path = services/NaaVRE-visualization-api
+	url = git@github.com:QCDIS/NaaVRE-visualization-api.git
