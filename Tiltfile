@@ -40,6 +40,7 @@ groups = {
     'kube-prometheus-stack-admission-create',
     'kube-prometheus-stack-admission-patch',
     'flagger',
+    'NaaVRE-visualization-api',
     ],
   }
 default_groups = [
@@ -71,3 +72,4 @@ include('services/canary-example/Tiltfile')
 include('services/kube-prometheus-stack/Tiltfile')
 include('services/flagger/Tiltfile')
 include('services/podinfo/Tiltfile')
+include('services/NaaVRE-visualization-api/Tiltfile')
