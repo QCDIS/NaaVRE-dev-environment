@@ -1,3 +1,5 @@
+load('../../helpers.Tiltfile', 'get_custom_build_command')
+
 naavre_dev_sync_steps = [
   sync('./submodules/NaaVRE/jupyterlab_vre/', '/live/py/jupyterlab_vre/'),
   sync('./submodules/NaaVRE/packages/', '/live/ts/packages/'),
@@ -11,7 +13,7 @@ naavre_dev_run_steps = [
 
 custom_build(
   'qcdis/n-a-a-vre-dev',
-  'docker buildx build ./submodules/NaaVRE -f ./submodules/NaaVRE/docker/vanilla/dev.Dockerfile -t $EXPECTED_REF -t qcdis/n-a-a-vre-dev:latest --push',
+  get_custom_build_command(path='./submodules/NaaVRE', file='./submodules/NaaVRE/docker/vanilla/dev.Dockerfile', extra_args=['-t', 'qcdis/n-a-a-vre-dev:latest']),
   [
     './submodules/NaaVRE/environment.yml',
     './submodules/NaaVRE/lerna.json',
