@@ -1,3 +1,5 @@
+allow_k8s_contexts('naavre-dev-vm')
+
 config.define_string_list("groups-to-run", args=True)
 cfg = config.parse()
 groups = {
