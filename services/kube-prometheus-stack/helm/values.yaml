@@ -64,7 +64,96 @@ prometheus:
             regex: prometheus-server
             action: drop
 
+        - job_name: 'n-a-a-vre-integration'
+          authorization:
+            credentials: 'EXAMPLE_TOKEN'
+            type: 'Bearer'
+          metrics_path: '/n-a-a-vre-integration/hub/metrics'
+#          scheme: 'https'
+#          tls_config:
+#            insecure_skip_verify: true
+          static_configs:
+            - targets: ['hub.default.svc.cluster.local:8081']
+
+alertmanager:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+        kubernetes.io/ingress.class: nginx
+        nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+        - naavre-dev.minikube.test
+    paths:
+        - /alertmanager(/|$)(.*)
+
+
+  enabled: true
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      receiver: slack
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 3h
+    receivers:
+    - name: slack
+      slack_configs:
+      - api_url: "https://hooks.slack.com/services/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"
+        channel: "#n-a-a-vre-monitoring"
+        send_resolved: true
+        title: "[{{ .Status }}] Alert: {{ .GroupLabels.alertname }}"
+        text: >-
+          *Alert:* {{ .Annotations.summary }}
+          *Description:* {{ .Annotations.description }}
+          *Details:*
+          {{ range .Alerts -}}
+            - *Alert:* {{ .Labels.alertname }}
+              *Instance:* {{ .Labels.instance }}
+              *Severity:* {{ .Labels.severity }}
+          {{ end }}
 
 
 
+
+additionalPrometheusRulesMap:
+  rule-name:
+    groups:
+      - name: Node
+        rules:
+          - alert: HostOutOfMemory
+            expr: (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 50) * on(instance) group_left (nodename) node_uname_info{ nodename=~".+" }
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: Host out of memory (instance { { $labels.instance } })
+              description: "Node memory is filling up (< 50% left)\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          - alert: HostMemoryUnderMemoryPressure
+            expr: (rate(node_vmstat_pgmajfault[1m]) > 1000) * on(instance) group_left (nodename) node_uname_info{nodename=~".+"}
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: Host memory under memory pressure (instance {{ $labels.instance }})
+              description: "The node is under heavy memory pressure. High rate of major page faults\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+          - alert: NodeDown
+            expr: kube_node_status_condition{condition="Ready",status="false"} == 1
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Node Down ({{ $labels.node }})"
+              description: "Kubernetes node {{ $labels.node }} is down and not Ready for more than 5 minutes."
+      - name: service
+        rules:
+          - alert: JupyterHubSpawnFailure
+            expr: sum(jupyterhub_server_spawn_duration_seconds_bucket{status!="success"})  by (instance, job,status)
+            for: 2m
+            labels:
+              severity: warning
+            annotations:
+              summary: JupyterLab {{ $labels.job }} from {{ $labels.instance }} failed to spawn with status {{ $labels.status }}
+              description: "JupyterLab {{ $labels.job }} from {{ $labels.instance }} failed to spawn with status {{ $labels.status }}"
 
