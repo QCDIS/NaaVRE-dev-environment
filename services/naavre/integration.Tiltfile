@@ -13,22 +13,22 @@ k8s_resource(
   labels=['NaaVRE-integration'],
   trigger_mode=TRIGGER_MODE_MANUAL,
   links=['https://naavre-dev.minikube.test/n-a-a-vre-integration/'],
-  resource_deps=['vrepaas-vreapi', 'n-a-a-vre-dev'],
+  
   )
 k8s_resource(
   'user-scheduler',
   labels=['NaaVRE-integration'],
-  resource_deps=['vrepaas-vreapi', 'n-a-a-vre-dev'],
+  
   )
 k8s_resource(
   'proxy',
   labels=['NaaVRE-integration'],
   trigger_mode=TRIGGER_MODE_MANUAL,
-  resource_deps=['vrepaas-vreapi', 'n-a-a-vre-dev'],
+  
   )
 k8s_resource(
   'user-placeholder',
   labels=['NaaVRE-integration'],
   pod_readiness='ignore',
-  resource_deps=['vrepaas-vreapi', 'n-a-a-vre-dev'],
+  
   )

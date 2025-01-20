@@ -115,4 +115,6 @@ keycloakConfigCli:
             - email
 
 metrics:
+  serviceMonitor:
+    enabled: true
   enabled: true

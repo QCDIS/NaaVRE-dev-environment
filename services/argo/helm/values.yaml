@@ -1,5 +1,10 @@
 singleNamespace: true
+
 controller:
+  serviceMonitor:
+    enabled: true
+  metricsConfig:
+    enabled: true
   resources:
     requests:
       cpu: 900m

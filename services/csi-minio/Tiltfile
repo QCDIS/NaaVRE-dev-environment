@@ -1,0 +1,19 @@
+load('ext://helm_remote', 'helm_remote')
+load('ext://namespace', 'namespace_create', 'namespace_inject')
+namespace_create('csi')
+
+helm_remote(
+  'csi-s3',
+  repo_name='yandex-s3',
+  repo_url='https://yandex-cloud.github.io/k8s-csi-s3/charts',
+  values=[
+    './helm/values.yaml',
+    ],
+   namespace='csi'
+  )
+
+k8s_resource('csi-s3',
+  labels=['csi'],
+  resource_deps=[
+  'csi-s3-provisioner'],
+)

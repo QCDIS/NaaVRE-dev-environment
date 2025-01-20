@@ -1,0 +1,18 @@
+secret:
+  # Specifies whether the secret should be created
+  create: true
+  # S3 Access Key
+  accessKey: "vl-bucket-key-Ros5M1"
+  # S3 Secret Key
+  secretKey: "wdPzB2ytDffhoVzGGGl4sxEfrOAZA6UXHfnT6Fan"
+  # Endpoint
+  # For AWS set it to "https://s3.<region>.amazonaws.com", for example https://s3.eu-central-1.amazonaws.com
+  # In China set it to "https://s3.<region>.amazonaws.com.cn", for example https://s3.cn-north-1.amazonaws.com.cn
+  endpoint: https://scruffy.lab.uvalight.net:9000
+  region: "nl-uvalight"
+
+storageClass:
+  singleBucket: "minikube-deleteme-pvc"
+  name: csi-minio-nl-uvalight
+  mounter: s3fs
+  mountOptions: ""

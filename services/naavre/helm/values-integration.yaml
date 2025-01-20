@@ -77,7 +77,7 @@ singleuser:
     VLAB_SLUG: n-a-a-vre
     ARGO_WF_SPEC_SERVICEACCOUNT: executor
     VRE_API_VERIFY_SSL: 'false'
-  image:
-    name: qcdis/n-a-a-vre-dev
-    tag: latest
-    pullPolicy: Never
+#  image:
+#    name: qcdis/n-a-a-vre
+#    tag: latest
+#    pullPolicy: IfNotPresent
